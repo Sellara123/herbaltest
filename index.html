@@ -8,6 +8,115 @@
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS POPUP MELAYANG ===== */
+        /* Gaya minimalis, siap pakai */
+        .video-popup {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 340px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 40, 0, 0.4);
+            z-index: 99999;
+            overflow: hidden;
+            border: 3px solid #ffb74d;
+            animation: slideInUp 0.5s ease-out;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .popup-header {
+            background: #ffb74d;
+            color: #1b5e20;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .popup-header span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .popup-header i {
+            font-size: 1.2rem;
+        }
+
+        .close-popup {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #1b5e20;
+            transition: 0.2s;
+            line-height: 1;
+            padding: 0 5px;
+        }
+
+        .close-popup:hover {
+            color: #ffffff;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .popup-footer {
+            padding: 12px;
+            background: #f1f8e9;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+
+        .popup-footer a {
+            color: #1b5e20;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .popup-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* responsive untuk layar kecil */
+        @media (max-width: 576px) {
+            .video-popup {
+                width: calc(100% - 40px);
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header & Navigation -->
@@ -120,15 +229,20 @@ Kab Mojokerto, Jawa timur 68166</p>
     </footer>
 
 
-    <!-- POPUP VIDEO IKLAN MELAYANG -->
+    <!-- ===== POPUP VIDEO IKLAN MELAYANG ===== -->
+    <!-- Cukup copy blok ini ke halaman website Anda -->
     <div class="video-popup" id="videoPopup">
         <div class="popup-header">
             <span><i class="fas fa-play-circle"></i> Video Iklan Fresh Herbal</span>
             <button class="close-popup" id="closePopupBtn">&times;</button>
         </div>
         <div class="video-container">
-            <!-- GANTI embed video sesuai keinginan. Contoh menggunakan video promosi herbal (YouTube) -->
-            <iframe src="bawang hitam 500 (1).mp4" title="Iklan Herbal" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <!-- GANTI src YouTube dengan video iklan Anda -->
+            <iframe src="bawang hitam 500(1).mp4" 
+                title="Iklan Herbal" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowfullscreen>
+            </iframe>
         </div>
         <div class="popup-footer">
             ⏳ Promo akhir bulan! <a href="catalog.html">Klik di sini</a> untuk produk diskon.
@@ -138,6 +252,24 @@ Kab Mojokerto, Jawa timur 68166</p>
 
     <script src="js/main.js"></script>
     <script src="js/products.js"></script>
+    <!-- ===== SCRIPT UNTUK TOMBOL CLOSE ===== -->
+    <script>
+        (function() {
+            const popup = document.getElementById('videoPopup');
+            const closeBtn = document.getElementById('closePopupBtn');
+            
+            if (popup && closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    popup.style.opacity = '0';
+                    popup.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 300);
+                });
+            }
+        })();
+    </script>
 
 </body>
 </html>
