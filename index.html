@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ===== CSS POPUP MELAYANG ===== */
-        /* Gaya minimalis, siap pakai */
+        /* ===== CSS POPUP MELAYANG DENGAN VIDEO LOKAL ===== */
         .video-popup {
             position: fixed;
             bottom: 30px;
@@ -23,7 +22,7 @@
             overflow: hidden;
             border: 3px solid #ffb74d;
             animation: slideInUp 0.5s ease-out;
-            font-family: 'Poppins', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         @keyframes slideInUp {
@@ -44,17 +43,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-weight: 600;
+            font-weight: bold;
         }
 
         .popup-header span {
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .popup-header i {
-            font-size: 1.2rem;
         }
 
         .close-popup {
@@ -75,17 +70,16 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
             background: #000;
+            line-height: 0;
         }
 
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .video-container video {
             width: 100%;
-            height: 100%;
-            border: 0;
+            height: auto;
+            display: block;
+            aspect-ratio: 16/9;
+            object-fit: cover;
         }
 
         .popup-footer {
@@ -99,7 +93,7 @@
 
         .popup-footer a {
             color: #1b5e20;
-            font-weight: 600;
+            font-weight: bold;
             text-decoration: none;
         }
 
@@ -107,7 +101,7 @@
             text-decoration: underline;
         }
 
-        /* responsive untuk layar kecil */
+        /* responsive untuk HP */
         @media (max-width: 576px) {
             .video-popup {
                 width: calc(100% - 40px);
@@ -228,47 +222,62 @@ Kab Mojokerto, Jawa timur 68166</p>
         </div>
     </footer>
 
-
-    <!-- ===== POPUP VIDEO IKLAN MELAYANG ===== -->
-    <!-- Cukup copy blok ini ke halaman website Anda -->
+<!-- ===== POPUP VIDEO DENGAN FILE LOKAL ===== -->
     <div class="video-popup" id="videoPopup">
         <div class="popup-header">
-            <span><i class="fas fa-play-circle"></i> Video Iklan Fresh Herbal</span>
+            <span><i class="fas fa-play-circle"></i> Promo Bawang Hitam</span>
             <button class="close-popup" id="closePopupBtn">&times;</button>
         </div>
         <div class="video-container">
-            <!-- GANTI src YouTube dengan video iklan Anda -->
-            <iframe img="bawang hitam 500(1).mp4" 
-                title="Iklan Herbal" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                allowfullscreen>
-            </iframe>
+            <!-- VIDEO LOKAL: file "bawang hitam 500 (1).mp4" -->
+            <video id="videoIklan" controls autoplay muted loop playsinline>
+                <source src="bawang hitam 500 (1).mp4" type="video/mp4">
+                <!-- Fallback jika file tidak ditemukan atau format tidak didukung -->
+                <p>Browser tidak mendukung video atau file <b>bawang hitam 500 (1).mp4</b> tidak ditemukan.</p>
+            </video>
         </div>
         <div class="popup-footer">
-            ⏳ Promo akhir bulan! <a href="catalog.html">Klik di sini</a> untuk produk diskon.
+            ⏳ Bawang Hitam 500g Rp 95.000 <a href="#">Beli Sekarang</a>
         </div>
     </div>
 
 
+
     <script src="js/main.js"></script>
     <script src="js/products.js"></script>
-    <!-- ===== SCRIPT UNTUK TOMBOL CLOSE ===== -->
+    <!-- ===== SCRIPT TOMBOL CLOSE ===== -->
     <script>
-        (function() {
-            const popup = document.getElementById('videoPopup');
-            const closeBtn = document.getElementById('closePopupBtn');
-            
-            if (popup && closeBtn) {
-                closeBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    popup.style.opacity = '0';
-                    popup.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        popup.style.display = 'none';
-                    }, 300);
-                });
-            }
-        })();
+        // Ambil elemen
+        const popup = document.getElementById('videoPopup');
+        const closeBtn = document.getElementById('closePopupBtn');
+        const video = document.getElementById('videoIklan');
+
+        // Event tombol close
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                // Hentikan video sebelum ditutup
+                if (video) {
+                    video.pause();
+                }
+                // Animasi tutup
+                popup.style.transition = 'opacity 0.3s, transform 0.3s';
+                popup.style.opacity = '0';
+                popup.style.transform = 'translateY(20px)';
+                
+                // Sembunyikan setelah animasi selesai
+                setTimeout(function() {
+                    popup.style.display = 'none';
+                }, 300);
+            });
+        }
+
+        // Cek apakah video bisa diputar otomatis
+        if (video) {
+            // Browser mungkin blok autoplay jika tidak muted, tapi kita sudah muted
+            video.play().catch(function(error) {
+                console.log('Autoplay gagal, tapi video tetap siap diputar:', error);
+            });
+        }
     </script>
 
 </body>
