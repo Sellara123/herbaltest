@@ -313,69 +313,99 @@
         </div>
     </header>
 
-    <!-- Cart Header -->
+    <!-- Social Media & Consultation Header -->
     <section class="cart-header">
         <div class="container">
-            <h1><i class="fas fa-shopping-cart"></i> Keranjang Belanja</h1>
-            <p>Periksa dan kelola produk yang akan Anda beli</p>
+            <h1><i class="fas fa-comments"></i> Hubungi Kami</h1>
+            <p>Terhubung dengan Fresh Herbal melalui berbagai platform media sosial kami</p>
         </div>
     </section>
 
-    <!-- Cart Content -->
+    <!-- Social Media & Consultation Content -->
     <section class="cart-content">
         <div class="container">
-            <div class="cart-container">
-                <!-- Cart Items Column -->
-                <div class="cart-items-column">
-                    <div id="cartItemsContainer">
-                        <!-- Cart items will be loaded here by JavaScript -->
-                    </div>
-                    
-                    <!-- Cart Actions -->
-                    <div class="cart-actions" id="cartActions">
-                        <a href="catalog.html" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Lanjut Belanja
-                        </a>
-                        <button onclick="clearCart()" class="btn btn-secondary" id="clearCartBtn">
-                            <i class="fas fa-trash"></i> Kosongkan Keranjang
-                        </button>
-                    </div>
-                    
-                    <!-- Recommended Products -->
-                    <div class="recommended-products">
-                        <h3>Produk Rekomendasi</h3>
-                        <div class="products-grid" id="recommendedProducts">
-                            <!-- Recommended products will be loaded here -->
-                        </div>
-                    </div>
-                </div>
+            <div class="cart-container" style="display: flex; flex-direction: column; gap: 2rem;">
                 
-                <!-- Cart Summary Column -->
-                <div class="cart-summary-column">
-                    <div class="cart-summary">
-                        <h2><i class="fas fa-receipt"></i> Ringkasan Belanja</h2>
-                        
-                        <div id="cartSummary">
-                            <!-- Summary will be loaded here by JavaScript -->
+                <!-- WhatsApp Consultation Section -->
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-left: 5px solid #25d366; text-align: center;">
+                    <h2 style="color: #2e7d32; margin-bottom: 1rem;"><i class="fab fa-whatsapp" style="color: #25d366;"></i> Konsultasi WhatsApp</h2>
+                    <p style="color: #666; margin-bottom: 1.5rem; font-size: 1.1rem;">Hubungi kami melalui WhatsApp untuk konsultasi produk herbal dan informasi lebih lengkap</p>
+                    <a href="https://wa.me/6285649589679" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 10px; background: #25d366; border-color: #25d366;">
+                        <i class="fab fa-whatsapp"></i> Chat WhatsApp: +62 856-4958-9679
+                    </a>
+                </div>
+
+                <!-- Social Media Section -->
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h2 style="color: #2e7d32; margin-bottom: 2rem; text-align: center;"><i class="fas fa-share-alt"></i> Ikuti Kami di Media Sosial</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <!-- Shopee -->
+                        <div style="background: linear-gradient(135deg, #ee4d2d, #ff6b35); padding: 2rem; border-radius: 12px; color: white; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fas fa-shopping-bag" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3 style="margin: 0 0 0.5rem 0;">Shopee</h3>
+                            <p style="margin: 0 0 1rem 0; opacity: 0.9;">Belanja produk Fresh Herbal</p>
+                            <a href="https://shopee.co.id/freshherbal" target="_blank" class="btn" style="background: white; color: #ee4d2d; border: none; font-weight: 600;">Kunjungi Shopee</a>
                         </div>
-                        
-                        <div class="shipping-notice">
-                            <i class="fas fa-shipping-fast"></i>
-                            <div>
-                                <strong>Gratis Ongkos Kirim!</strong>
-                                <p>Untuk pembelian minimal Rp 200.000</p>
-                            </div>
+
+                        <!-- Facebook -->
+                        <div style="background: linear-gradient(135deg, #1877f2, #0a66c2); padding: 2rem; border-radius: 12px; color: white; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fab fa-facebook" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3 style="margin: 0 0 0.5rem 0;">Facebook</h3>
+                            <p style="margin: 0 0 1rem 0; opacity: 0.9;">Update berita dan promo terbaru</p>
+                            <a href="https://www.facebook.com/freshherbal" target="_blank" class="btn" style="background: white; color: #1877f2; border: none; font-weight: 600;">Kunjungi Facebook</a>
                         </div>
-                        
-                        <a href="checkout.html" class="btn btn-primary checkout-btn" id="checkoutBtn">
-                            <i class="fas fa-lock"></i> Lanjut ke Pembayaran
-                        </a>
-                        
-                        <a href="catalog.html" class="continue-shopping">
-                            <i class="fas fa-plus-circle"></i> Tambah Produk Lainnya
-                        </a>
+
+                        <!-- TikTok -->
+                        <div style="background: linear-gradient(135deg, #000000, #25f4ee); padding: 2rem; border-radius: 12px; color: white; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fab fa-tiktok" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3 style="margin: 0 0 0.5rem 0;">TikTok</h3>
+                            <p style="margin: 0 0 1rem 0; opacity: 0.9;">Lihat video produk dan tips kesehatan</p>
+                            <a href="https://www.tiktok.com/@freshherbal" target="_blank" class="btn" style="background: white; color: #000; border: none; font-weight: 600;">Kunjungi TikTok</a>
+                        </div>
+
+                        <!-- Instagram -->
+                        <div style="background: linear-gradient(135deg, #feda75, #fa7e1e, #d300a4); padding: 2rem; border-radius: 12px; color: white; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fab fa-instagram" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3 style="margin: 0 0 0.5rem 0;">Instagram</h3>
+                            <p style="margin: 0 0 1rem 0; opacity: 0.9;">Galeri foto dan konten inspiratif</p>
+                            <a href="https://www.instagram.com/freshherbal" target="_blank" class="btn" style="background: white; color: #d300a4; border: none; font-weight: 600;">Kunjungi Instagram</a>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Contact Information Section -->
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h2 style="color: #2e7d32; margin-bottom: 1.5rem; text-align: center;"><i class="fas fa-info-circle"></i> Informasi Kontak Lainnya</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div style="text-align: center;">
+                            <i class="fas fa-phone" style="font-size: 2rem; color: #2e7d32; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #2e7d32; margin: 0.5rem 0;">Telepon</h3>
+                            <p style="color: #666; margin: 0;">+62 856-4958-9679</p>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <i class="fas fa-envelope" style="font-size: 2rem; color: #2e7d32; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #2e7d32; margin: 0.5rem 0;">Email</h3>
+                            <p style="color: #666; margin: 0;">freshherbalblackgarlic@gmail.com</p>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: #2e7d32; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #2e7d32; margin: 0.5rem 0;">Alamat</h3>
+                            <p style="color: #666; margin: 0;">Ds Watukenongo, Kec Pungging, Kab Mojokerto, Jawa Timur 68166</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Back to Shopping -->
+                <div style="text-align: center;">
+                    <a href="catalog.html" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Katalog Produk
+                    </a>
+                </div>
+
             </div>
         </div>
     </section>
@@ -399,6 +429,13 @@
                     <p>Senin - Jumat: 08:00 - 17:00</p>
                     <p>Sabtu: 08:00 - 15:00</p>
                     <p>Minggu: Tutup</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Media Sosial</h3>
+                    <p><i class="fas fa-shopping-bag"></i> <a href="https://shopee.co.id/freshherbal" target="_blank">Shopee</a></p>
+                    <p><i class="fab fa-facebook"></i> <a href="https://www.facebook.com/freshherbal" target="_blank">Facebook</a></p>
+                    <p><i class="fab fa-tiktok"></i> <a href="https://www.tiktok.com/@freshherbal" target="_blank">TikTok</a></p>
+                    <p><i class="fab fa-instagram"></i> <a href="https://www.instagram.com/freshherbal" target="_blank">Instagram</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
