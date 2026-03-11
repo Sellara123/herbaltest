@@ -92,7 +92,7 @@ const products = [
         id: 1,
         name: 'coming soon',
         price: 85000,
-        image: 'https://imagizer.imageshack.com/img923/4493/7YHYTI.png',
+        image: 'https://imagizer.imageshack.com/img922/637/s5du8W.png',
         category: '',
         description: 'Madu murni dari bunga alami, tanpa bahan pengawet.',
         featured: true
