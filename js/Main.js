@@ -101,7 +101,7 @@ const products = [
         id: 2,
         name: 'Black Garlic',
         price: 45000,
-        image: 'https://imagizer.imageshack.com/img923/4493/7YHYTI.png',
+        image: 'https://imagizer.imageshack.com/img923/7346/r50f6F.png',
         category: 'Rimpang',
         description: 'Jahe merah kualitas premium untuk kesehatan.',
         featured: true
@@ -110,7 +110,7 @@ const products = [
         id: 3,
         name: 'coming soon',
         price: 35000,
-        image: 'https://imagizer.imageshack.com/img923/4493/7YHYTI.png',
+        image: 'https://imagizer.imageshack.com/img922/6064/NcUFXj.png',
         category: 'Bubuk',
         description: 'Kunyit bubuk organik untuk minuman sehat.',
         featured: true
@@ -119,7 +119,7 @@ const products = [
         id: 4,
         name: 'coming soon',
         price: 40000,
-        image: 'https://imagizer.imageshack.com/img923/4493/7YHYTI.png',
+        image: 'https://imagizer.imageshack.com/img922/3025/KTm2iB.png',
         category: '',
         description: 'Temulawak segar untuk menjaga kesehatan hati.',
         featured: true
