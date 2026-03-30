@@ -40,7 +40,17 @@
         <div class="container">
             <div class="product-detail-grid">
                 <div class="product-images">
-                    <img id="mainImage" src="" alt="Product Image">
+                    <img id="mainImage" src="" alt="Product Image" class="main-product-image">
+                    
+                    <!-- Product Image Gallery -->
+                    <div class="product-gallery">
+                        <div class="gallery-container">
+                            <img src="" alt="Product Image 1" class="gallery-thumb" onclick="changeMainImage(this)">
+                            <img src="" alt="Product Image 2" class="gallery-thumb" onclick="changeMainImage(this)">
+                            <img src="" alt="Product Image 3" class="gallery-thumb" onclick="changeMainImage(this)">
+                            <img src="" alt="Product Image 4" class="gallery-thumb" onclick="changeMainImage(this)">
+                        </div>
+                    </div>
                 </div>
                 <div class="product-info">
                     <h1 id="productName"></h1>
