@@ -41,6 +41,21 @@ function changeQuantity(change) {
     quantityInput.value = quantity;
 }
 
+function changeMainImage(element) {
+    const mainImage = document.getElementById('mainImage');
+    const imageSrc = element.src;
+    
+    if (imageSrc) {
+        mainImage.src = imageSrc;
+    }
+    
+    // Update active thumbnail
+    document.querySelectorAll('.gallery-thumb').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    element.classList.add('active');
+}
+
 function addToCartFromDetail() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = parseInt(urlParams.get('id'));
