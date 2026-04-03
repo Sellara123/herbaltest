@@ -380,3 +380,6 @@ function getCartTotal() {
         total: subtotal + shipping
     };
 }
+
+// Export products data ke global window
+window.productsData = products;
