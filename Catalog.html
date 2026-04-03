@@ -3,11 +3,485 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fresh Herbal - Toko Herbal Alami</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <title>Katalog - Fresh Herbal | Toko Herbal Alami</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        .main-header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            width: 70px;
+            height: auto;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .main-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .main-nav a:hover,
+        .main-nav a.active {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .cart-count {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Catalog Filter Styles */
+        .catalog-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .catalog-filters select,
+        .catalog-filters input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #2e7d32;
+        }
+
+        .product-category {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #e53935;
+            margin-bottom: 1rem;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1b5e20;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Product Detail Modal */
+        .product-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            max-width: 1000px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
+            transition: 0.3s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            color: #2e7d32;
+        }
+
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .product-images {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .main-product-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+        }
+
+        .gallery-thumb {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gallery-thumb:hover,
+        .gallery-thumb.active {
+            border-color: #2e7d32;
+            transform: scale(1.02);
+        }
+
+        .product-info-detail h1 {
+            color: #2e7d32;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price-detail {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #e53935;
+            margin: 1rem 0;
+        }
+
+        .product-description {
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        .product-description ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .quantity-selector button {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .quantity-selector input {
+            width: 70px;
+            text-align: center;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Footer Styles */
+        .main-footer {
+            background-color: #1b5e20;
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-section p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .main-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #2e7d32;
+                padding: 1rem;
+            }
+            
+            .main-nav.active {
+                display: block;
+            }
+            
+            .main-nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .catalog-filters {
+                flex-direction: column;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1rem;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2e7d32;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header & Navigation -->
@@ -15,39 +489,34 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-    <h1>
-        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
-        Fresh Herbal
-    </h1>
+                    <h1>
+                        <img src="https://imagizer.imageshack.com/img922/637/s5du8W.png" alt="Logo Fresh Herbal" class="logo-img" style="width: 50px;">
+                        Fresh Herbal
+                    </h1>
                 </div>
-                
                 <button class="mobile-menu-btn" aria-label="Toggle menu">
                     <i class="fas fa-bars"></i>
                 </button>
-                
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="about.html"><i class="fas fa-info-circle"></i> Tentang Kami</a></li>
-                        <li><a href="catalog.html"><i class="fas fa-store"></i> Katalog</a></li>
-                        <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Keranjang <span class="cart-count">0</span></a></li>
-                        <li><a href="dashboard.html" class="active"><i class="fas fa-comments"></i> Testimoni</a></li>
+                        <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#"><i class="fas fa-info-circle"></i> Tentang Kami</a></li>
+                        <li><a href="#" class="active"><i class="fas fa-store"></i> Katalog</a></li>
+                        <li><a href="#"><i class="fas fa-shopping-cart"></i> Keranjang <span class="cart-count" id="cartCount">0</span></a></li>
+                        <li><a href="#"><i class="fas fa-comments"></i> Testimoni</a></li>
                     </ul>
                 </nav>
             </div>
         </div>
     </header>
 
-    
     <section class="page-header">
         <div class="container">
             <h1>Katalog Produk</h1>
             <p>Temukan berbagai produk herbal berkualitas</p>
-            
-            <!-- Filter Section -->
             <div class="catalog-filters">
                 <select id="categoryFilter">
-                    <option value="">Semua Kategori</option>
+                    <option value="all">Semua Kategori</option>
                     <option value="Rimpang">Rimpang</option>
                     <option value="Bubuk">Bubuk</option>
                 </select>
@@ -63,27 +532,31 @@
 
     <section class="catalog-products">
         <div class="container">
-            <div class="products-grid" id="productsContainer">
-                <!-- Products loaded by JavaScript -->
-            </div>
+            <div class="products-grid" id="productsContainer"></div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="product-modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
     <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-    <h3>
-        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
-        Fresh Herbal
-    </h3>
+                    <h3>
+                        <img src="https://imagizer.imageshack.com/img922/637/s5du8W.png" alt="Logo Fresh Herbal" style="width: 40px;">
+                        Fresh Herbal
+                    </h3>
                     <p>Menyediakan produk herbal alami untuk kesehatan keluarga Indonesia sejak 2010.</p>
                 </div>
                 <div class="footer-section">
                     <h3>Kontak Kami</h3>
-                    <p><i class="fas fa-map-marker-alt"></i>Ds Watukenongo, Kec Pungging,
-Kab Mojokerto, Jawa timur 68166</p>
+                    <p><i class="fas fa-map-marker-alt"></i>Ds Watukenongo, Kec Pungging, Kab Mojokerto, Jawa timur 68166</p>
                     <p><i class="fas fa-phone"></i>+62 856-4958-9679</p>
                     <p><i class="fas fa-envelope"></i>freshherbalblackgarlic@gmail.com</p>
                 </div>
@@ -100,8 +573,256 @@ Kab Mojokerto, Jawa timur 68166</p>
         </div>
     </footer>
 
-    
-    <script src="js/main.js"></script>
-    <script src="js/product.js"></script>
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: "Madu Alami Premium",
+                category: "Bubuk",
+                price: 85000,
+                image: "https://imagizer.imageshack.com/img922/637/s5du8W.png",
+                gallery: [
+                    "https://imagizer.imageshack.com/img922/637/s5du8W.png",
+                    "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
+                    "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
+                    "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
+                ],
+                description: "<p><strong>Madu Alami Premium</strong> adalah madu murni yang dihasilkan oleh lebah dari nektar bunga-bunga pilihan. Madu ini diproses secara alami tanpa pemanasan berlebih untuk menjaga khasiat dan nutrisinya.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan sistem kekebalan tubuh</li><li>Membantu menyembuhkan luka dan infeksi</li><li>Menjaga kesehatan pencernaan</li><li>Sumber energi alami</li></ul><br><p><strong>Cara Konsumsi:</strong> 1-2 sendok makan per hari, dapat dicampur dengan air hangat atau teh.</p>"
+            },
+            {
+                id: 2,
+                name: "Black Garlic (Bawang Hitam)",
+                category: "Rimpang",
+                price: 120000,
+                image: "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
+                gallery: [
+                    "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
+                    "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
+                    "https://imagizer.imageshack.com/img922/637/s5du8W.png",
+                    "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
+                ],
+                description: "<p><strong>Black Garlic (Bawang Hitam)</strong> adalah bawang putih biasa yang difermentasi dalam suhu dan kelembaban terkontrol selama beberapa minggu. Proses fermentasi ini mengubah warna bawang putih menjadi hitam dan menghasilkan rasa yang manis, tekstur yang lembut, serta meningkatkan kandungan antioksidannya hingga 2x lipat.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan daya tahan tubuh</li><li>Menjaga kesehatan jantung dan pembuluh darah</li><li>Membantu mengontrol kadar kolesterol</li><li>Antioksidan tinggi untuk anti-penuaan</li><li>Membantu detoksifikasi tubuh</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat dikonsumsi langsung 1-2 siung per hari atau dicampur dalam masakan.</p>"
+            },
+            {
+                id: 3,
+                name: "Kunyit Bubuk Organik",
+                category: "Bubuk",
+                price: 45000,
+                image: "https://imagizer.imageshack.com/img922/6064/NcUFXj.png",
+                gallery: [
+                    "https://imagizer.imageshack.com/img922/6064/NcUFXj.png",
+                    "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
+                    "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
+                    "https://imagizer.imageshack.com/img922/637/s5du8W.png"
+                ],
+                description: "<p><strong>Kunyit Bubuk Organik</strong> terbuat dari kunyit segar pilihan yang dikeringkan dan digiling halus tanpa bahan tambahan apapun. Kunyit dikenal sebagai rempah dengan segudang manfaat kesehatan.</p><br><p><strong>Manfaat:</strong></p><ul><li>Anti-inflamasi alami (mengurangi peradangan)</li><li>Membantu mengatasi gangguan pencernaan</li><li>Meningkatkan fungsi hati</li><li>Menjaga kesehatan kulit dan mencegah jerawat</li><li>Membantu meredakan nyeri haid</li></ul><br><p><strong>Cara Konsumsi:</strong> Seduh 1/2 sendok teh dengan air hangat, tambahkan madu untuk rasa yang lebih nikmat.</p>"
+            },
+            {
+                id: 4,
+                name: "Temulawak Segar",
+                category: "Rimpang",
+                price: 35000,
+                image: "https://imagizer.imageshack.com/img922/3025/KTm2iB.png",
+                gallery: [
+                    "https://imagizer.imageshack.com/img922/3025/KTm2iB.png",
+                    "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
+                    "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
+                    "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
+                ],
+                description: "<p><strong>Temulawak Segar</strong> merupakan tanaman herbal asli Indonesia yang telah digunakan sejak zaman nenek moyang untuk menjaga kesehatan hati dan sistem pencernaan. Temulawak kami dipanen segar dari kebun organik.</p><br><p><strong>Manfaat:</strong></p><ul><li>Menjaga kesehatan hati (liver)</li><li>Meningkatkan nafsu makan</li><li>Membantu mengatasi gangguan pencernaan seperti maag</li><li>Mengurangi gejala rematik dan nyeri sendi</li><li>Membantu mengatasi masalah kulit</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat direbus untuk dibuat wedang atau dijadikan jamu tradisional. Iris tipis 2-3 cm, rebus dengan 2 gelas air hingga tersisa 1 gelas, tambahkan madu.</p>"
+            }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountElem = document.getElementById('cartCount');
+            if (cartCountElem) cartCountElem.textContent = count;
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function addToCart(productId, quantity = 1) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: quantity
+                });
+            }
+            updateCartCount();
+            showToast(`${product.name} ditambahkan ke keranjang!`);
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function renderProducts() {
+            const category = document.getElementById('categoryFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const sort = document.getElementById('sortFilter').value;
+            
+            let filtered = [...products];
+            
+            if (category !== 'all') {
+                filtered = filtered.filter(p => p.category === category);
+            }
+            
+            if (search) {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+            }
+            
+            if (sort === 'name') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sort === 'price-low') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sort === 'price-high') {
+                filtered.sort((a, b) => b.price - a.price);
+            }
+            
+            const container = document.getElementById('productsContainer');
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-search" style="font-size: 48px; margin-bottom: 1rem;"></i><p>Produk tidak ditemukan</p></div>';
+                return;
+            }
+            
+            container.innerHTML = filtered.map(product => `
+                <div class="product-card" data-id="${product.id}">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-category"><i class="fas fa-tag"></i> ${product.category}</p>
+                        <p class="product-price">Rp ${product.price.toLocaleString('id-ID')}</p>
+                        <div class="product-actions">
+                            <button class="btn btn-primary view-product" data-id="${product.id}">Lihat Detail</button>
+                            <button class="btn btn-secondary add-to-cart-btn" data-id="${product.id}"><i class="fas fa-shopping-cart"></i> Beli</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.view-product').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    showProductDetail(id);
+                });
+            });
+            
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    addToCart(id, 1);
+                });
+            });
+        }
+        
+        function showProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const modal = document.getElementById('productModal');
+            const modalContent = document.getElementById('modalContent');
+            let currentImage = product.image;
+            let currentIndex = 0;
+            
+            modalContent.innerHTML = `
+                <div class="product-detail-grid">
+                    <div class="product-images">
+                        <img src="${product.image}" alt="${product.name}" class="main-product-image" id="mainImage">
+                        <div class="product-gallery">
+                            <div class="gallery-container" id="galleryContainer">
+                                ${product.gallery.map((img, idx) => `
+                                    <img src="${img}" alt="Gambar ${idx + 1}" class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-index="${idx}">
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info-detail">
+                        <h1>${product.name}</h1>
+                        <p><i class="fas fa-tag"></i> Kategori: ${product.category}</p>
+                        <div class="product-price-detail">Rp ${product.price.toLocaleString('id-ID')}</div>
+                        <div class="product-description">${product.description}</div>
+                        <div class="quantity-selector">
+                            <button class="qty-minus">-</button>
+                            <input type="number" id="qtyInput" value="1" min="1" max="99">
+                            <button class="qty-plus">+</button>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-primary" id="addToCartDetail" style="width: 100%;">Tambah ke Keranjang</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            const mainImage = document.getElementById('mainImage');
+            const galleryThumbs = document.querySelectorAll('.gallery-thumb');
+            
+            galleryThumbs.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    galleryThumbs.forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                    mainImage.src = thumb.dataset.img;
+                    currentImage = thumb.dataset.img;
+                });
+            });
+            
+            const qtyInput = document.getElementById('qtyInput');
+            document.querySelector('.qty-minus').addEventListener('click', () => {
+                let val = parseInt(qtyInput.value);
+                if (val > 1) qtyInput.value = val - 1;
+            });
+            document.querySelector('.qty-plus').addEventListener('click', () => {
+                let val = parseInt(qtyInput.value);
+                if (val < 99) qtyInput.value = val + 1;
+            });
+            
+            document.getElementById('addToCartDetail').addEventListener('click', () => {
+                const quantity = parseInt(qtyInput.value);
+                addToCart(product.id, quantity);
+                modal.style.display = 'none';
+            });
+        }
+        
+        document.getElementById('categoryFilter').addEventListener('change', renderProducts);
+        document.getElementById('searchInput').addEventListener('input', renderProducts);
+        document.getElementById('sortFilter').addEventListener('change', renderProducts);
+        
+        document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
+            document.querySelector('.main-nav').classList.toggle('active');
+        });
+        
+        document.querySelector('.modal-close').addEventListener('click', () => {
+            document.getElementById('productModal').style.display = 'none';
+        });
+        
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('productModal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        renderProducts();
+        updateCartCount();
+    </script>
 </body>
 </html>
