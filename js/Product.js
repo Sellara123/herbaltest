@@ -411,26 +411,13 @@ function filterProducts() {
         }
     });
     
- function loadCatalogProducts(filteredProducts = null) {
-    const container = document.getElementById('productsContainer');
-    
-    if (!container) return;
-    
-    // Ambil data produk dari window.productsData
-    let productsData = window.productsData;
-    
-    // Fallback jika belum ada
-    if (!productsData || productsData.length === 0) {
-        productsData = [
-            { id: 1, name: 'Madu Alami Premium', price: 85000, image: 'https://imagizer.imageshack.com/img922/637/s5du8W.png', category: 'Madu', description: 'Madu murni' },
-            { id: 2, name: 'Black Garlic', price: 45000, image: 'https://imagizer.imageshack.com/img923/7346/r50f6F.png', category: 'Rimpang', description: 'Bawang hitam' },
-            { id: 3, name: 'Kunyit Bubuk Organik', price: 35000, image: 'https://imagizer.imageshack.com/img922/6064/NcUFXj.png', category: 'Bubuk', description: 'Kunyit organik' },
-            { id: 4, name: 'Temulawak Segar', price: 40000, image: 'https://imagizer.imageshack.com/img922/3025/KTm2iB.png', category: 'Rimpang', description: 'Temulawak segar' }
-        ];
-        window.productsData = productsData;
-    }
-    
-    const productsToShow = filteredProducts || productsData;
-    
-    // ... sisanya sama
+    loadCatalogProducts(filtered);
 }
+
+function viewProduct(productId) {
+    window.location.href = `product-detail.html?id=${productId}`;
+}
+
+// Expose catalog functions
+window.viewProduct = viewProduct;
+window.addToCartById = addToCartById;
