@@ -1,5 +1,49 @@
 // Main JavaScript File for Fresh Herbal
 
+// Product Data (harus di declare sebelum digunakan)
+const products = [
+    {
+        id: 1,
+        name: 'Madu Alami Premium',
+        price: 85000,
+        image: 'https://imagizer.imageshack.com/img922/637/s5du8W.png',
+        category: 'Madu',
+        description: 'Madu murni dari bunga alami, tanpa bahan pengawet.',
+        featured: true
+    },
+    {
+        id: 2,
+        name: 'Black Garlic',
+        price: 45000,
+        image: 'https://imagizer.imageshack.com/img923/7346/r50f6F.png',
+        category: 'Rimpang',
+        description: 'Bawang hitam hasil fermentasi dengan antioksidan tinggi.',
+        featured: true
+    },
+    {
+        id: 3,
+        name: 'Kunyit Bubuk Organik',
+        price: 35000,
+        image: 'https://imagizer.imageshack.com/img922/6064/NcUFXj.png',
+        category: 'Bubuk',
+        description: 'Kunyit bubuk organik untuk minuman sehat.',
+        featured: true
+    },
+    {
+        id: 4,
+        name: 'Temulawak Segar',
+        price: 40000,
+        image: 'https://imagizer.imageshack.com/img922/3025/KTm2iB.png',
+        category: 'Rimpang',
+        description: 'Temulawak segar untuk menjaga kesehatan hati.',
+        featured: true
+    }
+];
+
+// EXPORT ke global window (PENTING untuk katalog)
+window.productsData = products;
+window.products = products;
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all components
@@ -32,8 +76,11 @@ function initMobileMenu() {
         document.addEventListener('click', function(event) {
             if (!event.target.closest('.main-nav') && !event.target.closest('.mobile-menu-btn')) {
                 nav.classList.remove('active');
-                menuBtn.querySelector('i').classList.remove('fa-times');
-                menuBtn.querySelector('i').classList.add('fa-bars');
+                const icon = menuBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
             }
         });
     }
@@ -48,9 +95,10 @@ function initCart() {
     if (savedCart) {
         cart = JSON.parse(savedCart);
     }
+    updateCartCount();
 }
 
-function addToCart(product) {
+function addToCartFunction(product) {
     const existingItem = cart.find(item => item.id === product.id);
     
     if (existingItem) {
@@ -71,6 +119,7 @@ function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     saveCart();
     updateCartCount();
+    showNotification('Produk dihapus dari keranjang', 'info');
 }
 
 function updateCartCount() {
@@ -79,6 +128,11 @@ function updateCartCount() {
     
     cartCountElements.forEach(element => {
         element.textContent = totalItems;
+        if (totalItems === 0) {
+            element.style.display = 'none';
+        } else {
+            element.style.display = 'inline-block';
+        }
     });
 }
 
@@ -86,53 +140,18 @@ function saveCart() {
     localStorage.setItem('freshHerbalCart', JSON.stringify(cart));
 }
 
-// Product Data
-const products = [
-    {
-        id: 1,
-        name: 'coming soon',
-        price: 85000,
-        image: 'https://imagizer.imageshack.com/img922/637/s5du8W.png',
-        category: '',
-        description: 'Madu murni dari bunga alami, tanpa bahan pengawet.',
-        featured: true
-    },
-    {
-        id: 2,
-        name: 'Black Garlic',
-        price: 45000,
-        image: 'https://imagizer.imageshack.com/img923/7346/r50f6F.png',
-        category: 'Rimpang',
-        description: 'Jahe merah kualitas premium untuk kesehatan.',
-        featured: true
-    },
-    {
-        id: 3,
-        name: 'coming soon',
-        price: 35000,
-        image: 'https://imagizer.imageshack.com/img922/6064/NcUFXj.png',
-        category: 'Bubuk',
-        description: 'Kunyit bubuk organik untuk minuman sehat.',
-        featured: true
-    },
-    {
-        id: 4,
-        name: 'coming soon',
-        price: 40000,
-        image: 'https://imagizer.imageshack.com/img922/3025/KTm2iB.png',
-        category: '',
-        description: 'Temulawak segar untuk menjaga kesehatan hati.',
-        featured: true
-    },
-];
-
-// Load Featured Products
+// Load Featured Products (untuk halaman home)
 function loadFeaturedProducts() {
     const featuredContainer = document.getElementById('featuredProducts');
     
     if (!featuredContainer) return;
     
-    const featuredProducts = products.filter(product => product.featured);
+    const featuredProducts = products.filter(product => product.featured === true);
+    
+    if (featuredProducts.length === 0) {
+        featuredContainer.innerHTML = '<p class="text-center">Belum ada produk unggulan</p>';
+        return;
+    }
     
     featuredContainer.innerHTML = featuredProducts.map(product => `
         <div class="product-card">
@@ -144,7 +163,7 @@ function loadFeaturedProducts() {
                     <button onclick="viewProduct(${product.id})" class="btn btn-secondary">
                         <i class="fas fa-eye"></i> Detail
                     </button>
-                    <button onclick="addToCart(${product.id})" class="btn btn-primary">
+                    <button onclick="addToCartFromList(${product.id})" class="btn btn-primary">
                         <i class="fas fa-cart-plus"></i> Beli
                     </button>
                 </div>
@@ -159,10 +178,16 @@ function viewProduct(productId) {
 }
 
 // Add to Cart from Product List
-function addToCart(productId) {
+function addToCartFromList(productId) {
     const product = products.find(p => p.id === productId);
     if (product) {
-        addToCart(product);
+        addToCartFunction({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: 1
+        });
     }
 }
 
@@ -206,7 +231,7 @@ function validateForm(form) {
             }
             
             // Phone validation
-            if (input.name === 'phone') {
+            if (input.name === 'phone' || input.id === 'phone') {
                 const phoneRegex = /^[0-9]{10,13}$/;
                 if (!phoneRegex.test(input.value)) {
                     showError(input, 'Nomor telepon harus 10-13 digit angka');
@@ -221,6 +246,8 @@ function validateForm(form) {
 
 function showError(input, message) {
     const formGroup = input.closest('.form-group');
+    if (!formGroup) return;
+    
     let errorElement = formGroup.querySelector('.error-message');
     
     if (!errorElement) {
@@ -235,6 +262,8 @@ function showError(input, message) {
 
 function clearError(input) {
     const formGroup = input.closest('.form-group');
+    if (!formGroup) return;
+    
     const errorElement = formGroup.querySelector('.error-message');
     
     if (errorElement) {
@@ -242,6 +271,23 @@ function clearError(input) {
     }
     
     input.classList.remove('error');
+}
+
+function processCheckout(form) {
+    // Simple checkout processing
+    const name = form.querySelector('#name')?.value || '';
+    const email = form.querySelector('#email')?.value || '';
+    const phone = form.querySelector('#phone')?.value || '';
+    const address = form.querySelector('#address')?.value || '';
+    
+    if (name && email && phone && address) {
+        showNotification('Pesanan berhasil diproses!', 'success');
+        localStorage.removeItem('freshHerbalCart');
+        updateCartCount();
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+    }
 }
 
 // Notification System
@@ -290,50 +336,56 @@ function showNotification(message, type = 'info') {
 }
 
 // Add CSS animation for notification
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
+if (!document.querySelector('#notification-styles')) {
+    const style = document.createElement('style');
+    style.id = 'notification-styles';
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
-        to {
-            transform: translateX(0);
-            opacity: 1;
+        
+        .error {
+            border-color: #f44336 !important;
         }
-    }
-    
-    .error {
-        border-color: #f44336 !important;
-    }
-    
-    .error-message {
-        color: #f44336;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-`;
-document.head.appendChild(style);
+        
+        .error-message {
+            color: #f44336;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 // Export functions for use in other files
-window.addToCart = addToCart;
+window.addToCart = addToCartFunction;
 window.removeFromCart = removeFromCart;
 window.viewProduct = viewProduct;
 window.showNotification = showNotification;
 window.validateForm = validateForm;
+window.updateCartCount = updateCartCount;
+window.getCartTotal = getCartTotal;
+window.addToCartFromList = addToCartFromList;
 
 // Add to cart function (for use throughout the site)
-function addToCart(product) {
+function addToCartGlobal(product) {
     // Get current cart
-    let cart = JSON.parse(localStorage.getItem('freshHerbalCart')) || [];
+    let cartData = JSON.parse(localStorage.getItem('freshHerbalCart')) || [];
     
     // Check if product already exists
-    const existingItem = cart.find(item => item.id === product.id);
+    const existingItem = cartData.find(item => item.id === product.id);
     
     if (existingItem) {
         existingItem.quantity += product.quantity || 1;
     } else {
-        cart.push({
+        cartData.push({
             id: product.id,
             name: product.name,
             price: product.price,
@@ -343,7 +395,7 @@ function addToCart(product) {
     }
     
     // Save to localStorage
-    localStorage.setItem('freshHerbalCart', JSON.stringify(cart));
+    localStorage.setItem('freshHerbalCart', JSON.stringify(cartData));
     
     // Update cart count
     updateCartCount();
@@ -357,10 +409,13 @@ function addToCart(product) {
     }
 }
 
+// Override the global addToCart
+window.addToCart = addToCartGlobal;
+
 // Update cart count function
-function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('freshHerbalCart')) || [];
-    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+function updateCartCountGlobal() {
+    const cartData = JSON.parse(localStorage.getItem('freshHerbalCart')) || [];
+    const totalItems = cartData.reduce((total, item) => total + item.quantity, 0);
     
     // Update all cart count elements
     document.querySelectorAll('.cart-count').forEach(element => {
@@ -369,10 +424,13 @@ function updateCartCount() {
     });
 }
 
+// Override updateCartCount
+window.updateCartCount = updateCartCountGlobal;
+
 // Get cart total function
 function getCartTotal() {
-    const cart = JSON.parse(localStorage.getItem('freshHerbalCart')) || [];
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const cartData = JSON.parse(localStorage.getItem('freshHerbalCart')) || [];
+    const subtotal = cartData.reduce((total, item) => total + (item.price * item.quantity), 0);
     const shipping = subtotal >= 200000 ? 0 : 15000;
     return {
         subtotal: subtotal,
@@ -381,5 +439,5 @@ function getCartTotal() {
     };
 }
 
-// Export products data ke global window
-window.productsData = products;
+// Call update cart count on load
+updateCartCountGlobal();
