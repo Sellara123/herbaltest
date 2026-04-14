@@ -722,7 +722,7 @@
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const id = parseInt(btn.dataset.id);
-                    showProductDetail(id);
+                    window.location.href = `product-detail.html?kode-produk=${id}`;
                 });
             });
             
