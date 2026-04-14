@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadProductDetail() {
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = parseInt(urlParams.get('id'));
+    const productId = parseInt(urlParams.get('kode-produk'));
     
     // Cari produk dari data utama (window.productsData atau products)
     let product = null;
@@ -160,7 +160,7 @@ function changeMainImage(element) {
 
 function addToCartFromDetail() {
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = parseInt(urlParams.get('id'));
+    const productId = parseInt(urlParams.get('kode-produk'));
     const quantity = parseInt(document.getElementById('quantity').value);
     
     // Cari produk dari data utama
