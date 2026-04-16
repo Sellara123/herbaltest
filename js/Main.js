@@ -87,68 +87,68 @@ function saveCart() {
 }
 
 // Make products available globally
-window.productsData = products;
+window.productsData = [
     {
         id: 1,
-        name; "Madu Alami Premium",
-        category; "Bubuk",
-        price; 85000,
-        image; "https://imagizer.imageshack.com/img922/637/s5du8W.png",
-        gallery; [
+        name: "Madu Alami Premium",
+        category: "Bubuk",
+        price: 85000,
+        image: "https://imagizer.imageshack.com/img922/637/s5du8W.png",
+        gallery: [
             "https://imagizer.imageshack.com/img922/637/s5du8W.png",
             "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
             "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
             "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
         ],
-        description; "<p><strong>Madu Alami Premium</strong> adalah madu murni yang dihasilkan oleh lebah dari nektar bunga-bunga pilihan. Madu ini diproses secara alami tanpa pemanasan berlebih untuk menjaga khasiat dan nutrisinya.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan sistem kekebalan tubuh</li><li>Membantu menyembuhkan luka dan infeksi</li><li>Menjaga kesehatan pencernaan</li><li>Sumber energi alami</li></ul><br><p><strong>Cara Konsumsi:</strong> 1-2 sendok makan per hari, dapat dicampur dengan air hangat atau teh.</p>",
-        featured; true
-    }
+        description: "<p><strong>Madu Alami Premium</strong> adalah madu murni yang dihasilkan oleh lebah dari nektar bunga-bunga pilihan. Madu ini diproses secara alami tanpa pemanasan berlebih untuk menjaga khasiat dan nutrisinya.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan sistem kekebalan tubuh</li><li>Membantu menyembuhkan luka dan infeksi</li><li>Menjaga kesehatan pencernaan</li><li>Sumber energi alami</li></ul><br><p><strong>Cara Konsumsi:</strong> 1-2 sendok makan per hari, dapat dicampur dengan air hangat atau teh.</p>",
+        featured: true
+    },
     {
         id: 2,
-        name; "Black Garlic (Bawang Hitam)",
-        category; "Rimpang",
-        price; 120000,
-        image; "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
-        gallery; [
+        name: "Black Garlic (Bawang Hitam)",
+        category: "Rimpang",
+        price: 120000,
+        image: "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
+        gallery: [
             "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
             "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
             "https://imagizer.imageshack.com/img922/637/s5du8W.png",
             "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
         ],
-        description; "<p><strong>Black Garlic (Bawang Hitam)</strong> adalah bawang putih biasa yang difermentasi dalam suhu dan kelembaban terkontrol selama beberapa minggu. Proses fermentasi ini mengubah warna bawang putih menjadi hitam dan menghasilkan rasa yang manis, tekstur yang lembut, serta meningkatkan kandungan antioksidannya hingga 2x lipat.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan daya tahan tubuh</li><li>Menjaga kesehatan jantung dan pembuluh darah</li><li>Membantu mengontrol kadar kolesterol</li><li>Antioksidan tinggi untuk anti-penuaan</li><li>Membantu detoksifikasi tubuh</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat dikonsumsi langsung 1-2 siung per hari atau dicampur dalam masakan.</p>",
-        featured; true
-    }
+        description: "<p><strong>Black Garlic (Bawang Hitam)</strong> adalah bawang putih biasa yang difermentasi dalam suhu dan kelembaban terkontrol selama beberapa minggu. Proses fermentasi ini mengubah warna bawang putih menjadi hitam dan menghasilkan rasa yang manis, tekstur yang lembut, serta meningkatkan kandungan antioksidannya hingga 2x lipat.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan daya tahan tubuh</li><li>Menjaga kesehatan jantung dan pembuluh darah</li><li>Membantu mengontrol kadar kolesterol</li><li>Antioksidan tinggi untuk anti-penuaan</li><li>Membantu detoksifikasi tubuh</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat dikonsumsi langsung 1-2 siung per hari atau dicampur dalam masakan.</p>",
+        featured: true
+    },
     {
         id: 3,
-        name; "Kunyit Bubuk Organik",
-        category; "Bubuk",
-        price; 45000,
-        image; "https://imagizer.imageshack.com/img922/6064/NcUFXj.png",
-        gallery; [
+        name: "Kunyit Bubuk Organik",
+        category: "Bubuk",
+        price: 45000,
+        image: "https://imagizer.imageshack.com/img922/6064/NcUFXj.png",
+        gallery: [
             "https://imagizer.imageshack.com/img922/6064/NcUFXj.png",
             "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
             "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
             "https://imagizer.imageshack.com/img922/637/s5du8W.png"
         ],
-        description; "<p><strong>Kunyit Bubuk Organik</strong> terbuat dari kunyit segar pilihan yang dikeringkan dan digiling halus tanpa bahan tambahan apapun. Kunyit dikenal sebagai rempah dengan segudang manfaat kesehatan.</p><br><p><strong>Manfaat:</strong></p><ul><li>Anti-inflamasi alami (mengurangi peradangan)</li><li>Membantu mengatasi gangguan pencernaan</li><li>Meningkatkan fungsi hati</li><li>Menjaga kesehatan kulit dan mencegah jerawat</li><li>Membantu meredakan nyeri haid</li></ul><br><p><strong>Cara Konsumsi:</strong> Seduh 1/2 sendok teh dengan air hangat, tambahkan madu untuk rasa yang lebih nikmat.</p>",
-        featured; true
-    }
+        description: "<p><strong>Kunyit Bubuk Organik</strong> terbuat dari kunyit segar pilihan yang dikeringkan dan digiling halus tanpa bahan tambahan apapun. Kunyit dikenal sebagai rempah dengan segudang manfaat kesehatan.</p><br><p><strong>Manfaat:</strong></p><ul><li>Anti-inflamasi alami (mengurangi peradangan)</li><li>Membantu mengatasi gangguan pencernaan</li><li>Meningkatkan fungsi hati</li><li>Menjaga kesehatan kulit dan mencegah jerawat</li><li>Membantu meredakan nyeri haid</li></ul><br><p><strong>Cara Konsumsi:</strong> Seduh 1/2 sendok teh dengan air hangat, tambahkan madu untuk rasa yang lebih nikmat.</p>",
+        featured: true
+    },
     {
         id: 4,
-        name; "Temulawak Segar",
-        category; "Rimpang",
-        price; 35000,
-        image; "https://imagizer.imageshack.com/img922/3025/KTm2iB.png",
-        gallery; [
+        name: "Temulawak Segar",
+        category: "Rimpang",
+        price: 35000,
+        image: "https://imagizer.imageshack.com/img922/3025/KTm2iB.png",
+        gallery: [
             "https://imagizer.imageshack.com/img922/3025/KTm2iB.png",
             "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
             "https://imagizer.imageshack.com/img923/7346/r50f6F.png",
             "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
         ],
-        description; "<p><strong>Temulawak Segar</strong> merupakan tanaman herbal asli Indonesia yang telah digunakan sejak zaman nenek moyang untuk menjaga kesehatan hati dan sistem pencernaan. Temulawak kami dipanen segar dari kebun organik.</p><br><p><strong>Manfaat:</strong></p><ul><li>Menjaga kesehatan hati (liver)</li><li>Meningkatkan nafsu makan</li><li>Membantu mengatasi gangguan pencernaan seperti maag</li><li>Mengurangi gejala rematik dan nyeri sendi</li><li>Membantu mengatasi masalah kulit</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat direbus untuk dibuat wedang atau dijadikan jamu tradisional. Iris tipis 2-3 cm, rebus dengan 2 gelas air hingga tersisa 1 gelas, tambahkan madu.</p>",
-        featured; true
+        description: "<p><strong>Temulawak Segar</strong> merupakan tanaman herbal asli Indonesia yang telah digunakan sejak zaman nenek moyang untuk menjaga kesehatan hati dan sistem pencernaan. Temulawak kami dipanen segar dari kebun organik.</p><br><p><strong>Manfaat:</strong></p><ul><li>Menjaga kesehatan hati (liver)</li><li>Meningkatkan nafsu makan</li><li>Membantu mengatasi gangguan pencernaan seperti maag</li><li>Mengurangi gejala rematik dan nyeri sendi</li><li>Membantu mengatasi masalah kulit</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat direbus untuk dibuat wedang atau dijadikan jamu tradisional. Iris tipis 2-3 cm, rebus dengan 2 gelas air hingga tersisa 1 gelas, tambahkan madu.</p>",
+        featured: false
     }
-;
+];
 
 // Load Featured Products
 function loadFeaturedProducts() {
@@ -156,7 +156,7 @@ function loadFeaturedProducts() {
     
     if (!featuredContainer) return;
     
-    const featuredProducts = products.filter(product => product.featured);
+    const featuredProducts = window.productsData.filter(product => product.featured).slice(0, 3);
     
     featuredContainer.innerHTML = featuredProducts.map(product => `
         <div class="product-card">
@@ -168,7 +168,7 @@ function loadFeaturedProducts() {
                     <button onclick="viewProduct(${product.id})" class="btn btn-secondary">
                         <i class="fas fa-eye"></i> Detail
                     </button>
-                    <button onclick="addToCart(${product.id})" class="btn btn-primary">
+                    <button onclick="addToCartFromList(${product.id})" class="btn btn-primary">
                         <i class="fas fa-cart-plus"></i> Beli
                     </button>
                 </div>
@@ -183,8 +183,8 @@ function viewProduct(productId) {
 }
 
 // Add to Cart from Product List
-function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
+function addToCartFromList(productId) {
+    const product = window.productsData.find(p => p.id === productId);
     if (product) {
         addToCart(product);
     }
