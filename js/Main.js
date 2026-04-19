@@ -93,7 +93,7 @@ window.productsData = [
         name: "Madu Alami Premium",
         category: "Bubuk",
         price: 85000,
-        image: "https://imagizer.imageshack.com/img922/637/s5du8W.png",
+        image: "https://imagizer.imageshack.com/img923/622/KjYf80.jpg",
         gallery: [
             "https://imagizer.imageshack.com/img922/637/s5du8W.png",
             "https://imagizer.imageshack.com/img922/9495/szR29F.jpg",
