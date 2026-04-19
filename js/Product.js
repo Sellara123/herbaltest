@@ -33,7 +33,7 @@ const productGalleryData = {
         description: '<p><strong>Kunyit Bubuk Organik</strong> terbuat dari kunyit segar pilihan yang dikeringkan dan digiling halus tanpa bahan tambahan apapun. Kunyit dikenal sebagai rempah dengan segudang manfaat kesehatan.</p><br><p><strong>Manfaat:</strong></p><ul><li>Anti-inflamasi alami (mengurangi peradangan)</li><li>Membantu mengatasi gangguan pencernaan</li><li>Meningkatkan fungsi hati</li><li>Menjaga kesehatan kulit dan mencegah jerawat</li><li>Membantu meredakan nyeri haid</li></ul><br><p><strong>Cara Konsumsi:</strong> Seduh 1/2 sendok teh dengan air hangat, tambahkan madu untuk rasa yang lebih nikmat.</p>'
     },
     4: {
-        main: 'https://imagizer.imageshack.com/img922/3025/KTm2iB.png',
+        main: 'https://imagizer.imageshack.com/img924/6108/5htgaP.jpg',
         gallery: [
             'https://imagizer.imageshack.com/img922/3025/KTm2iB.png',      // Foto utama Temulawak
             'https://imagizer.imageshack.com/img922/9495/szR29F.jpg',      // Sub foto Temulawak 1
