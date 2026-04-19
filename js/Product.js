@@ -3,7 +3,7 @@
 // Data gambar untuk setiap produk (SUB FOTO yang berbeda per produk)
 const productGalleryData = {
     1: {
-        main: 'https://imagizer.imageshack.com/img922/637/s5du8W.png',
+        main: 'https://imagizer.imageshack.com/img923/622/KjYf80.jpg',
         gallery: [
             'https://imagizer.imageshack.com/img922/637/s5du8W.png',      // Foto utama Madu
             'https://imagizer.imageshack.com/img922/9495/szR29F.jpg',      // Sub foto Madu 1
