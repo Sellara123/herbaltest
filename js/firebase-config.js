@@ -4,7 +4,7 @@
 const firebaseConfig = {
     apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
     authDomain: "fresh-herbal-2024.firebaseapp.com",
-    databaseURL: "YOUR_DATABASE_URL",
+    databaseURL: "https://console.firebase.google.com/u/0/project/fresh-herbal-2024/database/fresh-herbal-2024-default-rtdb/data/~2F",
     projectId: "fresh-herbal-2024",
     storageBucket: "fresh-herbal-2024.firebasestorage.app",
     messagingSenderId: "767982509787",
