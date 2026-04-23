@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Fresh Herbal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+        }
+        .admin-header {
+            background: #2e7d32;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-header h1 {
+            font-size: 1.5rem;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .btn-add {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+        .products-table {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .btn-edit, .btn-delete {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 4px;
+        }
+        .btn-edit {
+            background: #2196f3;
+            color: white;
+        }
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 {
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .form-group textarea {
+            min-height: 100px;
+        }
+        .gallery-input {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .gallery-input input {
+            flex: 1;
+        }
+        .btn-submit {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+        .close-modal {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1><i class="fas fa-leaf"></i> Fresh Herbal - Admin Panel</h1>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+    
+    <div class="container">
+        <button class="btn-add" onclick="openAddModal()">
+            <i class="fas fa-plus"></i> Tambah Produk
+        </button>
+        
+        <div class="products-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Gambar</th>
+                        <th>Nama Produk</th>
+                        <th>Slug</th>
+                        <th>Kategori</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <tr><td colspan="7">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal Form -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Tambah Produk</h2>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label>Nama Produk *</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="form-group">
+                    <label>Slug (URL name) *</label>
+                    <input type="text" id="productSlug" required placeholder="contoh: bawang-hitam">
+                    <small>Digunakan untuk URL: product-detail.html?name=slug</small>
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="productCategory">
+                        <option value="Bawang Hitam">Bawang Hitam</option>
+                        <option value="Bubuk">Bubuk</option>
+                        <option value="Madu">Madu</option>
+                        <option value="Minuman">Minuman</option>
+                        <option value="Rimpang">Rimpang</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Harga (Rp)</label>
+                    <input type="number" id="productPrice" required>
+                </div>
+                <div class="form-group">
+                    <label>Harga Diskon (kosongkan jika tidak ada)</label>
+                    <input type="number" id="productDiscount">
+                </div>
+                <div class="form-group">
+                    <label>Stok</label>
+                    <input type="number" id="productStock" value="99">
+                </div>
+                <div class="form-group">
+                    <label>Gambar Utama (URL)</label>
+                    <input type="text" id="productImage" required>
+                </div>
+                <div class="form-group">
+                    <label>Gallery Gambar (URL, pisahkan dengan koma)</label>
+                    <input type="text" id="productGallery" placeholder="url1, url2, url3">
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Singkat</label>
+                    <textarea id="productDescShort"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Lengkap (HTML)</label>
+                    <textarea id="productDescFull"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Link Pembelian (WhatsApp/Shopee/Tokopedia)</label>
+                    <input type="text" id="productBuyLink" placeholder="https://wa.me/6285649589679?text=Saya%20ingin%20membeli">
+                </div>
+                <button type="submit" class="btn-submit">Simpan Produk</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Config (GANTI DENGAN MILIK ANDA)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const productsRef = database.ref('products');
+        
+        // Cek login
+        if (localStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+        
+        let currentProducts = [];
+        
+        // Load products dari Firebase
+        function loadProducts() {
+            productsRef.on('value', (snapshot) => {
+                const products = snapshot.val();
+                currentProducts = [];
+                const tbody = document.getElementById('productsTableBody');
+                tbody.innerHTML = '';
+                
+                if (products) {
+                    Object.keys(products).forEach(key => {
+                        const product = products[key];
+                        product.id = key;
+                        currentProducts.push(product);
+                        
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td><img src="${product.image_main || product.image}" class="product-img" onerror="this.src='https://via.placeholder.com/50'"></td>
+                            <td>${product.name}</td>
+                            <td>${product.slug}</td>
+                            <td>${product.category}</td>
+                            <td>Rp ${(product.price_discount || product.price).toLocaleString('id-ID')}</td>
+                            <td>${product.stock || 0}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editProduct('${key}')"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn-delete" onclick="deleteProduct('${key}')"><i class="fas fa-trash"></i> Hapus</button>
+                            </td>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7">Belum ada produk. Silakan tambah produk baru.</td></tr>';
+                }
+            });
+        }
+        
+        // Tambah/Edit produk
+        function saveProduct(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('productId').value;
+            const galleryInput = document.getElementById('productGallery').value;
+            const gallery = galleryInput ? galleryInput.split(',').map(s => s.trim()) : [];
+            
+            const productData = {
+                name: document.getElementById('productName').value,
+                slug: document.getElementById('productSlug').value,
+                category: document.getElementById('productCategory').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                price_discount: document.getElementById('productDiscount').value ? parseInt(document.getElementById('productDiscount').value) : null,
+                stock: parseInt(document.getElementById('productStock').value),
+                image_main: document.getElementById('productImage').value,
+                image: document.getElementById('productImage').value,
+                gallery: gallery,
+                description_short: document.getElementById('productDescShort').value,
+                description_full: document.getElementById('productDescFull').value,
+                buy_link: document.getElementById('productBuyLink').value || 'https://wa.me/6285649589679',
+                featured: false,
+                created_at: new Date().toISOString()
+            };
+            
+            if (id) {
+                // Update produk
+                productsRef.child(id).update(productData).then(() => {
+                    alert('Produk berhasil diupdate!');
+                    closeModal();
+                });
+            } else {
+                // Tambah produk baru
+                productsRef.push(productData).then(() => {
+                    alert('Produk berhasil ditambahkan!');
+                    closeModal();
+                });
+            }
+        }
+        
+        function editProduct(id) {
+            const product = currentProducts.find(p => p.id === id);
+            if (product) {
+                document.getElementById('modalTitle').textContent = 'Edit Produk';
+                document.getElementById('productId').value = id;
+                document.getElementById('productName').value = product.name || '';
+                document.getElementById('productSlug').value = product.slug || '';
+                document.getElementById('productCategory').value = product.category || 'Bawang Hitam';
+                document.getElementById('productPrice').value = product.price || 0;
+                document.getElementById('productDiscount').value = product.price_discount || '';
+                document.getElementById('productStock').value = product.stock || 0;
+                document.getElementById('productImage').value = product.image_main || product.image || '';
+                document.getElementById('productGallery').value = (product.gallery || []).join(', ');
+                document.getElementById('productDescShort').value = product.description_short || '';
+                document.getElementById('productDescFull').value = product.description_full || '';
+                document.getElementById('productBuyLink').value = product.buy_link || '';
+                document.getElementById('productModal').style.display = 'flex';
+            }
+        }
+        
+        function deleteProduct(id) {
+            if (confirm('Yakin ingin menghapus produk ini?')) {
+                productsRef.child(id).remove().then(() => {
+                    alert('Produk berhasil dihapus!');
+                });
+            }
+        }
+        
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Tambah Produk';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+        
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = 'admin-login.html';
+        }
+        
+        document.getElementById('productForm').addEventListener('submit', saveProduct);
+        
+        // Generate slug otomatis dari nama
+        document.getElementById('productName').addEventListener('input', function() {
+            const slug = this.value.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-');
+            document.getElementById('productSlug').value = slug;
+        });
+        
+        loadProducts();
+        
+        // Close modal klik di luar
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
