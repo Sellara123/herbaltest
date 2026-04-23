@@ -2,13 +2,13 @@
 // Ganti dengan konfigurasi Firebase Anda sendiri
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
+    apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
+    authDomain: "fresh-herbal-2024.firebaseapp.com",
     databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    projectId: "fresh-herbal-2024",
+    storageBucket: "fresh-herbal-2024.firebasestorage.app",
+    messagingSenderId: "767982509787",
+    appId: "1:767982509787:web:6c16a655c1b4f6303c76fe"
 };
 
 // Initialize Firebase
