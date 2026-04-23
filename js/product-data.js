@@ -201,3 +201,47 @@ function getProductsByCategory(category) {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { productsDatabase, getProductBySlug, getAllProducts, getProductsByCategory };
 }
+
+// products-data.js - Baca data dari Firebase
+// Data produk diambil langsung dari Firebase, tidak hardcode
+
+let productsDatabase = [];
+let productsLoaded = false;
+
+// Fungsi untuk load produk dari Firebase
+async function loadProductsFromFirebase() {
+    return new Promise((resolve) => {
+        const productsRef = firebase.database().ref('products');
+        productsRef.once('value', (snapshot) => {
+            const products = snapshot.val();
+            productsDatabase = [];
+            
+            if (products) {
+                Object.keys(products).forEach(key => {
+                    const product = products[key];
+                    product.id = key;
+                    productsDatabase.push(product);
+                });
+            }
+            
+            productsLoaded = true;
+            resolve(productsDatabase);
+        });
+    });
+}
+
+// Fungsi get produk by slug
+function getProductBySlug(slug) {
+    return productsDatabase.find(product => product.slug === slug) || null;
+}
+
+// Fungsi get semua produk
+function getAllProducts() {
+    return productsDatabase;
+}
+
+// Export ke window
+window.productsDatabase = productsDatabase;
+window.getProductBySlug = getProductBySlug;
+window.getAllProducts = getAllProducts;
+window.loadProductsFromFirebase = loadProductsFromFirebase;
