@@ -25,6 +25,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .admin-header h1 {
             font-size: 1.5rem;
@@ -76,7 +78,7 @@
             object-fit: cover;
             border-radius: 8px;
         }
-        .btn-edit, .btn-delete {
+        .btn-edit, .btn-delete, .btn-featured {
             padding: 0.4rem 0.8rem;
             border: none;
             border-radius: 6px;
@@ -90,6 +92,21 @@
         .btn-delete {
             background: #f44336;
             color: white;
+        }
+        .btn-featured {
+            background: #ff9800;
+            color: white;
+        }
+        .btn-featured.active {
+            background: #4caf50;
+        }
+        .featured-badge {
+            background: #ff9800;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
         
         /* Modal */
@@ -135,14 +152,6 @@
         .form-group textarea {
             min-height: 100px;
         }
-        .gallery-input {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .gallery-input input {
-            flex: 1;
-        }
         .btn-submit {
             background: #2e7d32;
             color: white;
@@ -157,6 +166,11 @@
             float: right;
             font-size: 24px;
             cursor: pointer;
+        }
+        .warning-text {
+            color: #f44336;
+            font-size: 0.8rem;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -181,11 +195,12 @@
                         <th>Kategori</th>
                         <th>Harga</th>
                         <th>Stok</th>
+                        <th>Unggulan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="productsTableBody">
-                    <tr><td colspan="7">Loading...</td></tr>
+                    <tr><td colspan="8">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -255,16 +270,15 @@
     </div>
 
     <script>
-        // Firebase Config (GANTI DENGAN MILIK ANDA)
         const firebaseConfig = {
-    apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
-    authDomain: "fresh-herbal-2024.firebaseapp.com",
-    databaseURL: "https://console.firebase.google.com/u/0/project/fresh-herbal-2024/database/fresh-herbal-2024-default-rtdb/data/~2F",
-    projectId: "fresh-herbal-2024",
-    storageBucket: "fresh-herbal-2024.firebasestorage.app",
-    messagingSenderId: "767982509787",
-    appId: "1:767982509787:web:6c16a655c1b4f6303c76fe"
-};
+            apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
+            authDomain: "fresh-herbal-2024.firebaseapp.com",
+            databaseURL: "https://fresh-herbal-2024-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "fresh-herbal-2024",
+            storageBucket: "fresh-herbal-2024.firebasestorage.app",
+            messagingSenderId: "767982509787",
+            appId: "1:767982509787:web:6c16a655c1b4f6303c76fe"
+        };
         
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -295,23 +309,63 @@
                         row.innerHTML = `
                             <td><img src="${product.image_main || product.image}" class="product-img" onerror="this.src='https://via.placeholder.com/50'"></td>
                             <td>${product.name}</td>
-                            <td>${product.slug}</td>
+                            <td>${product.slug || '-'}</td>
                             <td>${product.category}</td>
                             <td>Rp ${(product.price_discount || product.price).toLocaleString('id-ID')}</td>
                             <td>${product.stock || 0}</td>
                             <td>
+                                ${product.featured ? '<span class="featured-badge"><i class="fas fa-star"></i> Unggulan</span>' : '-'}
+                            </td>
+                            <td>
+                                <button class="btn-featured ${product.featured ? 'active' : ''}" onclick="toggleFeatured('${key}', ${!product.featured})">
+                                    <i class="fas fa-${product.featured ? 'star' : 'star-o'}"></i> ${product.featured ? 'Cabut' : 'Jadikan Unggulan'}
+                                </button>
                                 <button class="btn-edit" onclick="editProduct('${key}')"><i class="fas fa-edit"></i> Edit</button>
                                 <button class="btn-delete" onclick="deleteProduct('${key}')"><i class="fas fa-trash"></i> Hapus</button>
                             </td>
                         `;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="7">Belum ada produk. Silakan tambah produk baru.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8">Belum ada produk. Silakan tambah produk baru.</td></tr>';
                 }
             });
         }
         
-        // Tambah/Edit produk
+        // Tambahkan fungsi untuk mendapatkan unique categories (opsional, untuk info)
+function getUniqueCategories() {
+    const categories = new Set();
+    currentProducts.forEach(product => {
+        if (product.category) categories.add(product.category);
+    });
+    console.log('Categories available:', Array.from(categories));
+}
+
+// Panggil setelah load products
+// Di dalam productsRef.on('value', ... tambahkan:
+// getUniqueCategories();
+        
+        // Toggle featured (max 3 produk unggulan)
+        async function toggleFeatured(productId, setFeatured) {
+            if (setFeatured) {
+                // Hitung berapa produk yang sudah featured
+                const featuredCount = currentProducts.filter(p => p.featured === true && p.id !== productId).length;
+                
+                if (featuredCount >= 3) {
+                    alert('Maksimal produk unggulan adalah 3! Hapus salah satu produk unggulan terlebih dahulu.');
+                    return;
+                }
+            }
+            
+            try {
+                await productsRef.child(productId).update({ featured: setFeatured });
+                alert(setFeatured ? 'Produk berhasil dijadikan unggulan!' : 'Produk berhasil dicabut dari unggulan');
+            } catch (error) {
+                alert('Gagal mengupdate status unggulan');
+                console.error(error);
+            }
+        }
+        
+        // Save product
         function saveProduct(event) {
             event.preventDefault();
             
@@ -331,23 +385,22 @@
                 gallery: gallery,
                 description_short: document.getElementById('productDescShort').value,
                 description_full: document.getElementById('productDescFull').value,
-                buy_link: document.getElementById('productBuyLink').value || 'https://wa.me/6285649589679',
+                orderonline_url: document.getElementById('productBuyLink').value || 'https://wa.me/6285649589679',
                 featured: false,
-                created_at: new Date().toISOString()
+                updated_at: new Date().toISOString()
             };
             
             if (id) {
-                // Update produk
                 productsRef.child(id).update(productData).then(() => {
                     alert('Produk berhasil diupdate!');
                     closeModal();
-                });
+                }).catch(err => alert('Error: ' + err.message));
             } else {
-                // Tambah produk baru
+                productData.created_at = new Date().toISOString();
                 productsRef.push(productData).then(() => {
                     alert('Produk berhasil ditambahkan!');
                     closeModal();
-                });
+                }).catch(err => alert('Error: ' + err.message));
             }
         }
         
@@ -366,7 +419,7 @@
                 document.getElementById('productGallery').value = (product.gallery || []).join(', ');
                 document.getElementById('productDescShort').value = product.description_short || '';
                 document.getElementById('productDescFull').value = product.description_full || '';
-                document.getElementById('productBuyLink').value = product.buy_link || '';
+                document.getElementById('productBuyLink').value = product.orderonline_url || product.buy_link || '';
                 document.getElementById('productModal').style.display = 'flex';
             }
         }
@@ -375,7 +428,7 @@
             if (confirm('Yakin ingin menghapus produk ini?')) {
                 productsRef.child(id).remove().then(() => {
                     alert('Produk berhasil dihapus!');
-                });
+                }).catch(err => alert('Error: ' + err.message));
             }
         }
         
