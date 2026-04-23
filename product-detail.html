@@ -15,10 +15,10 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-    <h1>
-        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
-        Fresh Herbal
-    </h1>
+                    <h1>
+                        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
+                        Fresh Herbal
+                    </h1>
                 </div>
                 
                 <button class="mobile-menu-btn" aria-label="Toggle menu">
@@ -27,11 +27,11 @@
                 
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="about.html"><i class="fas fa-info-circle"></i> Tentang Kami</a></li>
                         <li><a href="catalog.html"><i class="fas fa-store"></i> Katalog</a></li>
-                        <li><a href="hubungi-kami.html" class="active"><i class="fas fa-comments"></i> Hubungi Kami <span class="cart-count" style="display: none;">0</span></a></li>
-                        <li><a href="dashboard.html" class="active"><i class="fas fa-comments"></i> Testimoni</a></li>
+                        <li><a href="hubungi-kami.html"><i class="fas fa-comments"></i> Hubungi Kami</a></li>
+                        <li><a href="dashboard.html"><i class="fas fa-comments"></i> Testimoni</a></li>
                     </ul>
                 </nav>
             </div>
@@ -40,43 +40,11 @@
     
     <section class="product-detail">
         <div class="container">
-            <div class="product-detail-grid">
-                <div class="product-images">
-                    <!-- Modal untuk memperbesar gambar -->
-                    <div id="imageModal" class="image-modal">
-                        <span class="modal-close">&times;</span>
-                        <img class="modal-content" id="modalImage">
-                        <div class="modal-nav">
-                            <button class="modal-prev" onclick="navigateModal(-1)">&#10094;</button>
-                            <button class="modal-next" onclick="navigateModal(1)">&#10095;</button>
-                        </div>
-                    </div>
-
-                    <img id="mainImage" src="" alt="Product Image" class="main-product-image" onclick="openModal()">
-                    
-                    <!-- Product Image Gallery -->
-                    <div class="product-gallery">
-                        <div class="gallery-container" id="galleryContainer">
-                            <!-- Gallery thumbs akan diisi oleh JavaScript -->
-                        </div>
-                    </div>
-                </div>
-                <div class="product-info">
-                    <h1 id="productName"></h1>
-                    <p class="product-price" id="productPrice"></p>
-                    <div class="product-description" id="productDescription"></div>
-                    
-                    <!-- LINE 68-76 - KODE BARU -->
-<div class="product-actions">
-    <button onclick="buyNow()" class="btn btn-primary">
-        <i class="fas fa-shopping-bag"></i> Beli Sekarang
-    </button>
-</div>
-                    
-                    <div class="product-meta">
-                        <p><strong>Kategori:</strong> <span id="productCategory"></span></p>
-                        <p><strong>Stok:</strong> <span id="productStock">Tersedia</span></p>
-                    </div>
+            <div id="productContent" style="min-height: 400px;">
+                <!-- Loading spinner -->
+                <div style="text-align: center; padding: 60px 20px;">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 20px; color: #666;">Memuat data produk...</p>
                 </div>
             </div>
         </div>
@@ -92,10 +60,9 @@
                 </div>
                 <div class="footer-section">
                     <h3>Kontak Kami</h3>
-                    <p><i class="fas fa-map-marker-alt"></i>Ds Watukenongo, Kec Pungging,
-Kab Mojokerto, Jawa timur 68166</p>
-                    <p><i class="fas fa-phone"></i>+62 856-4958-9679</p>
-                    <p><i class="fas fa-envelope"></i>freshherbalblackgarlic@gmail.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ds Watukenongo, Kec Pungging, Kab Mojokerto, Jawa Timur 68166</p>
+                    <p><i class="fas fa-phone"></i> +62 856-4958-9679</p>
+                    <p><i class="fas fa-envelope"></i> freshherbalblackgarlic@gmail.com</p>
                 </div>
                 <div class="footer-section">
                     <h3>Jam Operasional</h3>
@@ -105,28 +72,270 @@ Kab Mojokerto, Jawa timur 68166</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2022 Fresh Herbal. Hak Cipta Dilindungi.</p>
+                <p>&copy; 2024 Fresh Herbal. Hak Cipta Dilindungi.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Di dalam tag head atau sebelum main.js -->
-<script src="js/products-data.js"></script>
-<script src="js/main.js"></script>
-<script src="js/product.js"></script>
-<script src="js/product-gallery.js"></script>
-    <script>
-// Fungsi untuk beli langsung (redirect ke URL pengiriman internal)
-function buyNow() {
-    const product = window.currentProductDetail;
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
-    if (product && product.orderonline_url) {
-        // Redirect ke URL orderonline yang sudah ditentukan per produk
-        window.location.href = product.orderonline_url;
-    } else {
-        alert('URL pemesanan tidak tersedia');
-    }
-}
-</script>
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
+            authDomain: "fresh-herbal-2024.firebaseapp.com",
+            databaseURL: "https://fresh-herbal-2024-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "fresh-herbal-2024",
+            storageBucket: "fresh-herbal-2024.firebasestorage.app",
+            messagingSenderId: "767982509787",
+            appId: "1:767982509787:web:6c16a655c1b4f6303c76fe"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Ambil parameter slug dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productSlug = urlParams.get('name');
+
+        const productContent = document.getElementById('productContent');
+
+        if (!productSlug) {
+            productContent.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Produk tidak ditemukan</h3>
+                    <p>Tidak ada produk yang dipilih.</p>
+                    <a href="catalog.html" class="btn btn-primary" style="margin-top: 20px;">Lihat Katalog</a>
+                </div>
+            `;
+        } else {
+            // Cari produk berdasarkan slug di Firebase
+            const productsRef = database.ref('products');
+            productsRef.orderByChild('slug').equalTo(productSlug).once('value')
+                .then((snapshot) => {
+                    let product = null;
+                    snapshot.forEach((childSnapshot) => {
+                        product = childSnapshot.val();
+                        product.firebaseId = childSnapshot.key;
+                    });
+
+                    if (product) {
+                        renderProductDetail(product);
+                    } else {
+                        productContent.innerHTML = `
+                            <div class="error-state">
+                                <i class="fas fa-search"></i>
+                                <h3>Produk Tidak Ditemukan</h3>
+                                <p>Produk dengan nama "${productSlug}" tidak tersedia.</p>
+                                <a href="catalog.html" class="btn btn-primary" style="margin-top: 20px;">Lihat Semua Produk</a>
+                            </div>
+                        `;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    productContent.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-database"></i>
+                            <h3>Gagal Memuat Data</h3>
+                            <p>Terjadi kesalahan saat menghubungkan ke database.</p>
+                            <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 20px;">Coba Lagi</button>
+                        </div>
+                    `;
+                });
+        }
+
+        function renderProductDetail(product) {
+            document.title = `${product.name} - Fresh Herbal`;
+            
+            const galleryImages = product.gallery && product.gallery.length ? product.gallery : [product.image_main || product.image];
+            const finalPrice = product.price_discount && product.price_discount < product.price ? product.price_discount : product.price;
+            const hasDiscount = product.price_discount && product.price_discount < product.price;
+            
+            // Harga HTML
+            let priceHTML = '';
+            if (hasDiscount) {
+                priceHTML = `
+                    <span style="text-decoration: line-through; color: #999; font-size: 1rem;">Rp ${product.price.toLocaleString('id-ID')}</span><br>
+                    <span style="color: #e44d26; font-size: 1.8rem; font-weight: bold;">Rp ${product.price_discount.toLocaleString('id-ID')}</span>
+                    <span style="background: #e44d26; color: white; padding: 4px 8px; border-radius: 20px; font-size: 0.8rem; margin-left: 10px;">
+                        Hemat ${Math.round((1 - product.price_discount/product.price) * 100)}%
+                    </span>
+                `;
+            } else {
+                priceHTML = `<span style="color: #e44d26; font-size: 1.8rem; font-weight: bold;">Rp ${product.price.toLocaleString('id-ID')}</span>`;
+            }
+            
+            // Stok HTML
+            let stockHTML = '';
+            if (product.stock > 0) {
+                stockHTML = `<span style="color: #4caf50;">Tersedia (${product.stock} item)</span>`;
+            } else {
+                stockHTML = '<span style="color: #f44336;">Stok Habis</span>';
+            }
+            
+            // Gallery thumbnails
+            let galleryHTML = '';
+            galleryImages.forEach((img, index) => {
+                galleryHTML += `<img src="${img}" class="gallery-thumb ${index === 0 ? 'active' : ''}" data-fullimg="${img}" data-index="${index}">`;
+            });
+            
+            // Build HTML dengan struktur yang sama dengan CSS
+            productContent.innerHTML = `
+                <div class="product-detail-grid">
+                    <div class="product-images">
+                        <!-- Modal untuk zoom gambar -->
+                        <div id="imageModal" class="image-modal">
+                            <span class="modal-close">&times;</span>
+                            <img class="modal-content" id="modalImage">
+                            <div class="modal-nav">
+                                <button class="modal-prev">&#10094;</button>
+                                <button class="modal-next">&#10095;</button>
+                            </div>
+                        </div>
+
+                        <img id="mainImage" src="${galleryImages[0]}" alt="${product.name}" class="main-product-image">
+                        
+                        <div class="product-gallery">
+                            <div class="gallery-container" id="galleryContainer">
+                                ${galleryHTML}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-info">
+                        <h1 id="productName">${product.name}</h1>
+                        <p class="product-price" id="productPrice">${priceHTML}</p>
+                        <div class="product-description" id="productDescription">${product.description_full || product.description_short || '<p>Deskripsi produk sedang diperbarui.</p>'}</div>
+                        
+                        <div class="product-actions">
+                            <button id="buyNowBtn" class="btn btn-primary">
+                                <i class="fas fa-shopping-bag"></i> Beli Sekarang
+                            </button>
+                        </div>
+                        
+                        <div class="product-meta">
+                            <p><strong>Kategori:</strong> ${product.category || 'Herbal'}</p>
+                            <p><strong>Stok:</strong> ${stockHTML}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Setup gallery dan modal
+            setupGalleryFunctionality(galleryImages);
+            
+            // Setup tombol beli
+            const buyBtn = document.getElementById('buyNowBtn');
+            if (buyBtn) {
+                buyBtn.addEventListener('click', function() {
+                    const buyUrl = product.orderonline_url || `https://wa.me/6285649589679?text=Saya%20ingin%20membeli%20${encodeURIComponent(product.name)}`;
+                    window.location.href = buyUrl;
+                });
+            }
+        }
+        
+        function setupGalleryFunctionality(galleryImages) {
+            const mainImage = document.getElementById('mainImage');
+            const thumbs = document.querySelectorAll('.gallery-thumb');
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const closeBtn = document.querySelector('.modal-close');
+            const prevBtn = document.querySelector('.modal-prev');
+            const nextBtn = document.querySelector('.modal-next');
+            let currentIndex = 0;
+            
+            if (!mainImage || !modal) return;
+            
+            // Event klik thumbnail
+            thumbs.forEach((thumb, idx) => {
+                thumb.addEventListener('click', function() {
+                    const newSrc = this.getAttribute('data-fullimg');
+                    mainImage.src = newSrc;
+                    thumbs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentIndex = idx;
+                });
+            });
+            
+            // Buka modal zoom
+            mainImage.onclick = function() {
+                modal.style.display = 'flex';
+                modalImg.src = mainImage.src;
+                currentIndex = Array.from(thumbs).findIndex(t => t.getAttribute('data-fullimg') === mainImage.src);
+                document.body.style.overflow = 'hidden';
+            };
+            
+            // Tutup modal
+            const closeModal = () => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            };
+            
+            if (closeBtn) closeBtn.onclick = closeModal;
+            
+            modal.onclick = function(e) {
+                if (e.target === modal) closeModal();
+            };
+            
+            // Navigasi prev/next
+            if (prevBtn) {
+                prevBtn.onclick = function() {
+                    currentIndex = (currentIndex - 1 + thumbs.length) % thumbs.length;
+                    const newSrc = thumbs[currentIndex].getAttribute('data-fullimg');
+                    modalImg.src = newSrc;
+                    mainImage.src = newSrc;
+                    thumbs.forEach(t => t.classList.remove('active'));
+                    thumbs[currentIndex].classList.add('active');
+                };
+            }
+            
+            if (nextBtn) {
+                nextBtn.onclick = function() {
+                    currentIndex = (currentIndex + 1) % thumbs.length;
+                    const newSrc = thumbs[currentIndex].getAttribute('data-fullimg');
+                    modalImg.src = newSrc;
+                    mainImage.src = newSrc;
+                    thumbs.forEach(t => t.classList.remove('active'));
+                    thumbs[currentIndex].classList.add('active');
+                };
+            }
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (modal.style.display === 'flex') {
+                    if (e.key === 'Escape') closeModal();
+                    if (e.key === 'ArrowLeft' && prevBtn) prevBtn.click();
+                    if (e.key === 'ArrowRight' && nextBtn) nextBtn.click();
+                }
+            });
+        }
+    </script>
+    
+    <!-- Mobile menu functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            const nav = document.querySelector('.main-nav');
+            
+            if (menuBtn && nav) {
+                menuBtn.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                    const icon = menuBtn.querySelector('i');
+                    if (nav.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
