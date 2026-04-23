@@ -66,16 +66,17 @@
                     <p class="product-price" id="productPrice"></p>
                     <div class="product-description" id="productDescription"></div>
                     
-                    <div class="product-actions">
-                        <div class="quantity-selector">
-                            <button onclick="changeQuantity(-1)">-</button>
-                            <input type="number" id="quantity" value="1" min="1">
-                            <button onclick="changeQuantity(1)">+</button>
-                        </div>
-                        <button onclick="addToCartFromDetail()" class="btn btn-primary">
-                            <i class="fas fa-cart-plus"></i> Tambah ke Keranjang
-                        </button>
-                    </div>
+                    <!-- LINE 68-76 - KODE BARU -->
+<div class="product-actions">
+    <div class="quantity-selector">
+        <button onclick="changeQuantity(-1)">-</button>
+        <input type="number" id="quantity" value="1" min="1">
+        <button onclick="changeQuantity(1)">+</button>
+    </div>
+    <button onclick="buyNow()" class="btn btn-primary">
+        <i class="fas fa-shopping-bag"></i> Beli Sekarang
+    </button>
+</div>
                     
                     <div class="product-meta">
                         <p><strong>Kategori:</strong> <span id="productCategory"></span></p>
@@ -119,5 +120,19 @@ Kab Mojokerto, Jawa timur 68166</p>
 <script src="js/main.js"></script>
 <script src="js/product.js"></script>
 <script src="js/product-gallery.js"></script>
+    <script>
+// Fungsi untuk beli langsung (redirect ke URL pengiriman internal)
+function buyNow() {
+    const product = window.currentProductDetail;
+    const quantity = parseInt(document.getElementById('quantity').value);
+    
+    if (product) {
+        // GANTI URL INI sesuai dengan web orderonline Anda
+        window.location.href = `https://orderonline.com/pesan?produk=${product.slug}&jumlah=${quantity}`;
+    } else {
+        alert('Produk tidak ditemukan');
+    }
+}
+</script>
 </body>
 </html>
