@@ -126,7 +126,7 @@ const productsDatabase = [
     {
         id: 5,
         name: "Madu Bawang Hitam Tunggal",
-        slug: "jahe-merah-instan",
+        slug: "madu-bawang-hitam",
         category: "Minuman",
         price: 55000,
         price_discount: 49000,
