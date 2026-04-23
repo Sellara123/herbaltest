@@ -124,13 +124,12 @@ Kab Mojokerto, Jawa timur 68166</p>
 // Fungsi untuk beli langsung (redirect ke URL pengiriman internal)
 function buyNow() {
     const product = window.currentProductDetail;
-    const quantity = parseInt(document.getElementById('quantity').value);
     
-    if (product) {
-        // GANTI URL INI sesuai dengan web orderonline Anda
-        window.location.href = `https://orderonline.com/pesan?produk=${product.slug}&jumlah=${quantity}`;
+    if (product && product.orderonline_url) {
+        // Redirect ke URL orderonline yang sudah ditentukan per produk
+        window.location.href = product.orderonline_url;
     } else {
-        alert('Produk tidak ditemukan');
+        alert('URL pemesanan tidak tersedia');
     }
 }
 </script>
