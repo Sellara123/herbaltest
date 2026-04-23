@@ -118,10 +118,10 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-    <h1>
-        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
-        Fresh Herbal
-    </h1>
+                    <h1>
+                        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
+                        Fresh Herbal
+                    </h1>
                 </div>
                 
                 <button class="mobile-menu-btn" aria-label="Toggle menu">
@@ -133,8 +133,8 @@
                         <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="about.html"><i class="fas fa-info-circle"></i> Tentang Kami</a></li>
                         <li><a href="catalog.html"><i class="fas fa-store"></i> Katalog</a></li>
-                        <li><a href="hubungi-kami.html" class="active"><i class="fas fa-comments"></i> Hubungi Kami <span class="cart-count" style="display: none;">0</span></a></li>
-                        <li><a href="dashboard.html" class="active"><i class="fas fa-comments"></i> Testimoni</a></li>
+                        <li><a href="hubungi-kami.html"><i class="fas fa-comments"></i> Hubungi Kami</a></li>
+                        <li><a href="dashboard.html"><i class="fas fa-comments"></i> Testimoni</a></li>
                     </ul>
                 </nav>
             </div>
@@ -157,7 +157,10 @@
         <div class="container">
             <h2 class="section-title">Produk Unggulan</h2>
             <div class="products-grid" id="featuredProducts">
-                <!-- Products will be loaded by JavaScript -->
+                <div style="text-align: center; padding: 40px;">
+                    <div class="spinner"></div>
+                    <p>Memuat produk unggulan...</p>
+                </div>
             </div>
         </div>
     </section>
@@ -196,10 +199,10 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-    <h3>
-        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
-        Fresh Herbal
-    </h3>
+                    <h3>
+                        <img src="logo-main.png" alt="Logo Fresh Herbal" class="logo-img">
+                        Fresh Herbal
+                    </h3>
                     <p>Menyediakan produk herbal alami untuk kesehatan keluarga Indonesia sejak 2010.</p>
                 </div>
                 <div class="footer-section">
@@ -217,23 +220,21 @@ Kab Mojokerto, Jawa timur 68166</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2022 Fresh Herbal. Hak Cipta Dilindungi.</p>
+                <p>&copy; 2024 Fresh Herbal. Hak Cipta Dilindungi.</p>
             </div>
         </div>
     </footer>
 
-<!-- ===== POPUP VIDEO DENGAN FILE LOKAL ===== -->
+    <!-- ===== POPUP VIDEO DENGAN FILE LOKAL ===== -->
     <div class="video-popup" id="videoPopup">
         <div class="popup-header">
             <span><i class="fas fa-play-circle"></i> Promo Bawang Hitam</span>
             <button class="close-popup" id="closePopupBtn">&times;</button>
         </div>
         <div class="video-container">
-            <!-- VIDEO LOKAL: file "bawang hitam 500 (1).mp4" -->
             <video id="videoIklan" controls autoplay muted loop playsinline>
                 <source src="bawang hitam 500 (1).mp4" type="video/mp4">
-                <!-- Fallback jika file tidak ditemukan atau format tidak didukung -->
-                <p>Browser tidak mendukung video atau file <b>bawang hitam 500 (1).mp4</b> tidak ditemukan.</p>
+                <p>Browser tidak mendukung video atau file tidak ditemukan.</p>
             </video>
         </div>
         <div class="popup-footer">
@@ -241,44 +242,163 @@ Kab Mojokerto, Jawa timur 68166</p>
         </div>
     </div>
 
-
-
-    <script src="js/main.js"></script>
-    <script src="js/products.js"></script>
-    <!-- ===== SCRIPT TOMBOL CLOSE ===== -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <script>
-        // Ambil elemen
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
+            authDomain: "fresh-herbal-2024.firebaseapp.com",
+            databaseURL: "https://fresh-herbal-2024-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "fresh-herbal-2024",
+            storageBucket: "fresh-herbal-2024.firebasestorage.app",
+            messagingSenderId: "767982509787",
+            appId: "1:767982509787:web:6c16a655c1b4f6303c76fe"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Load produk unggulan (featured = true)
+        function loadFeaturedProducts() {
+            const productsRef = database.ref('products');
+            productsRef.orderByChild('featured').equalTo(true).once('value')
+                .then((snapshot) => {
+                    const products = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const product = childSnapshot.val();
+                        product.id = childSnapshot.key;
+                        products.push(product);
+                    });
+                    
+                    // Urutkan berdasarkan nama atau yang terbaru
+                    displayFeaturedProducts(products);
+                })
+                .catch((error) => {
+                    console.error("Error loading featured products:", error);
+                    document.getElementById('featuredProducts').innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #f44336;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 48px;"></i>
+                            <p>Gagal memuat produk unggulan</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function displayFeaturedProducts(products) {
+            const container = document.getElementById('featuredProducts');
+            
+            if (!products || products.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <i class="fas fa-star" style="font-size: 48px; margin-bottom: 10px; display: block;"></i>
+                        <p>Belum ada produk unggulan. Tambahkan di Admin Panel.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Max 3 produk unggulan
+            const maxProducts = products.slice(0, 3);
+            
+            container.innerHTML = maxProducts.map(product => {
+                const price = product.price_discount && product.price_discount < product.price 
+                    ? product.price_discount 
+                    : product.price;
+                const originalPrice = product.price_discount ? product.price : null;
+                
+                return `
+                    <div class="product-card">
+                        <img src="${product.image_main || product.image}" alt="${product.name}" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-title">${product.name}</h3>
+                            <p class="product-price">
+                                ${originalPrice ? `<span style="text-decoration: line-through; color: #999; font-size: 0.9rem;">Rp ${originalPrice.toLocaleString('id-ID')}</span><br>` : ''}
+                                Rp ${price.toLocaleString('id-ID')}
+                            </p>
+                            <div class="product-actions">
+                                <button onclick="viewProduct('${product.slug}')" class="btn btn-secondary">
+                                    <i class="fas fa-eye"></i> Detail
+                                </button>
+                                <button onclick="buyNow('${product.slug}')" class="btn btn-primary">
+                                    <i class="fas fa-shopping-bag"></i> Beli
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Fungsi view product
+        function viewProduct(slug) {
+            window.location.href = `product-detail.html?name=${slug}`;
+        }
+
+        // Fungsi beli langsung
+        function buyNow(slug) {
+            const productsRef = database.ref('products');
+            productsRef.orderByChild('slug').equalTo(slug).once('value')
+                .then((snapshot) => {
+                    let product = null;
+                    snapshot.forEach((childSnapshot) => {
+                        product = childSnapshot.val();
+                    });
+                    if (product) {
+                        const buyUrl = product.orderonline_url || product.buy_link || `https://wa.me/6285649589679?text=Saya%20ingin%20membeli%20${encodeURIComponent(product.name)}`;
+                        window.location.href = buyUrl;
+                    } else {
+                        window.location.href = `product-detail.html?name=${slug}`;
+                    }
+                });
+        }
+
+        // Load produk unggulan saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeaturedProducts();
+            
+            // Mobile menu toggle
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            const nav = document.querySelector('.main-nav');
+            if (menuBtn && nav) {
+                menuBtn.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                    const icon = menuBtn.querySelector('i');
+                    if (nav.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+        });
+
+        // Popup video
         const popup = document.getElementById('videoPopup');
         const closeBtn = document.getElementById('closePopupBtn');
         const video = document.getElementById('videoIklan');
 
-        // Event tombol close
         if (closeBtn) {
             closeBtn.addEventListener('click', function() {
-                // Hentikan video sebelum ditutup
-                if (video) {
-                    video.pause();
-                }
-                // Animasi tutup
+                if (video) video.pause();
                 popup.style.transition = 'opacity 0.3s, transform 0.3s';
                 popup.style.opacity = '0';
                 popup.style.transform = 'translateY(20px)';
-                
-                // Sembunyikan setelah animasi selesai
                 setTimeout(function() {
                     popup.style.display = 'none';
                 }, 300);
             });
         }
 
-        // Cek apakah video bisa diputar otomatis
         if (video) {
-            // Browser mungkin blok autoplay jika tidak muted, tapi kita sudah muted
             video.play().catch(function(error) {
-                console.log('Autoplay gagal, tapi video tetap siap diputar:', error);
+                console.log('Autoplay error:', error);
             });
         }
     </script>
-
 </body>
 </html>
