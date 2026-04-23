@@ -1,190 +1,300 @@
-// Product Detail JavaScript
+// product.js - Update untuk menggunakan slug dari URL
 
-// Data gambar untuk setiap produk (SUB FOTO yang berbeda per produk)
-const productGalleryData = {
-    1: {
-        main: 'https://imagizer.imageshack.com/img923/622/KjYf80.jpg',
-        gallery: [
-            'https://imagizer.imageshack.com/img922/637/s5du8W.png',      // Foto utama Madu
-            'https://imagizer.imageshack.com/img922/9495/szR29F.jpg',      // Sub foto Madu 1
-            'https://imagizer.imageshack.com/img923/7346/r50f6F.png',      // Sub foto Madu 2
-            'https://imagizer.imageshack.com/img922/6064/NcUFXj.png'       // Sub foto Madu 3
-        ],
-        description: '<p><strong>Madu Alami Premium</strong> adalah madu murni yang dihasilkan oleh lebah dari nektar bunga-bunga pilihan. Madu ini diproses secara alami tanpa pemanasan berlebih untuk menjaga khasiat dan nutrisinya.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan sistem kekebalan tubuh</li><li>Membantu menyembuhkan luka dan infeksi</li><li>Menjaga kesehatan pencernaan</li><li>Sumber energi alami</li></ul><br><p><strong>Cara Konsumsi:</strong> 1-2 sendok makan per hari, dapat dicampur dengan air hangat atau teh.</p>'
-    },
-    2: {
-        main: 'https://imagizer.imageshack.com/img923/7346/r50f6F.png',
-        gallery: [
-            'https://imagizer.imageshack.com/img923/7346/r50f6F.png',      // Foto utama Bawang Hitam
-            'https://imagizer.imageshack.com/img922/9495/szR29F.jpg',      // Sub foto Bawang Hitam 1
-            'https://imagizer.imageshack.com/img922/637/s5du8W.png',       // Sub foto Bawang Hitam 2
-            'https://imagizer.imageshack.com/img922/6064/NcUFXj.png'       // Sub foto Bawang Hitam 3
-        ],
-        description: '<p><strong>Black Garlic (Bawang Hitam)</strong> adalah bawang putih biasa yang difermentasi dalam suhu dan kelembaban terkontrol selama beberapa minggu. Proses fermentasi ini mengubah warna bawang putih menjadi hitam dan menghasilkan rasa yang manis, tekstur yang lembut, serta meningkatkan kandungan antioksidannya hingga 2x lipat.</p><br><p><strong>Manfaat:</strong></p><ul><li>Meningkatkan daya tahan tubuh</li><li>Menjaga kesehatan jantung dan pembuluh darah</li><li>Membantu mengontrol kadar kolesterol</li><li>Antioksidan tinggi untuk anti-penuaan</li><li>Membantu detoksifikasi tubuh</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat dikonsumsi langsung 1-2 siung per hari atau dicampur dalam masakan.</p>'
-    },
-    3: {
-        main: 'https://imagizer.imageshack.com/img922/6064/NcUFXj.png',
-        gallery: [
-            'https://imagizer.imageshack.com/img922/6064/NcUFXj.png',      // Foto utama Kunyit
-            'https://imagizer.imageshack.com/img922/9495/szR29F.jpg',      // Sub foto Kunyit 1
-            'https://imagizer.imageshack.com/img923/7346/r50f6F.png',      // Sub foto Kunyit 2
-            'https://imagizer.imageshack.com/img922/637/s5du8W.png'        // Sub foto Kunyit 3
-        ],
-        description: '<p><strong>Kunyit Bubuk Organik</strong> terbuat dari kunyit segar pilihan yang dikeringkan dan digiling halus tanpa bahan tambahan apapun. Kunyit dikenal sebagai rempah dengan segudang manfaat kesehatan.</p><br><p><strong>Manfaat:</strong></p><ul><li>Anti-inflamasi alami (mengurangi peradangan)</li><li>Membantu mengatasi gangguan pencernaan</li><li>Meningkatkan fungsi hati</li><li>Menjaga kesehatan kulit dan mencegah jerawat</li><li>Membantu meredakan nyeri haid</li></ul><br><p><strong>Cara Konsumsi:</strong> Seduh 1/2 sendok teh dengan air hangat, tambahkan madu untuk rasa yang lebih nikmat.</p>'
-    },
-    4: {
-        main: 'https://imagizer.imageshack.com/img924/6108/5htgaP.jpg',
-        gallery: [
-            'https://imagizer.imageshack.com/img922/3025/KTm2iB.png',      // Foto utama Temulawak
-            'https://imagizer.imageshack.com/img922/9495/szR29F.jpg',      // Sub foto Temulawak 1
-            'https://imagizer.imageshack.com/img923/7346/r50f6F.png',      // Sub foto Temulawak 2
-            'https://imagizer.imageshack.com/img922/6064/NcUFXj.png'       // Sub foto Temulawak 3
-        ],
-        description: '<p><strong>Temulawak Segar</strong> merupakan tanaman herbal asli Indonesia yang telah digunakan sejak zaman nenek moyang untuk menjaga kesehatan hati dan sistem pencernaan. Temulawak kami dipanen segar dari kebun organik.</p><br><p><strong>Manfaat:</strong></p><ul><li>Menjaga kesehatan hati (liver)</li><li>Meningkatkan nafsu makan</li><li>Membantu mengatasi gangguan pencernaan seperti maag</li><li>Mengurangi gejala rematik dan nyeri sendi</li><li>Membantu mengatasi masalah kulit</li></ul><br><p><strong>Cara Konsumsi:</strong> Dapat direbus untuk dibuat wedang atau dijadikan jamu tradisional. Iris tipis 2-3 cm, rebus dengan 2 gelas air hingga tersisa 1 gelas, tambahkan madu.</p>'
-    }
-};
-
-// Variabel untuk tracking modal
-let currentModalIndex = 0;
-let currentProductImages = [];
+// Pastikan productsDatabase sudah di-load sebelumnya
+// Jika menggunakan file terpisah, pastikan untuk memuat products-data.js terlebih dahulu
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if we're on product detail page
+    // Cek apakah di halaman product detail
     if (window.location.pathname.includes('product-detail.html')) {
-        loadProductDetail();
+        loadProductDetailBySlug();
         setupModalEvents();
     }
     
-    // Check if we're on catalog page
+    // Cek apakah di halaman katalog
     if (window.location.pathname.includes('catalog.html')) {
-        loadCatalogProducts();
+        if (typeof loadCatalogProducts === 'function') {
+            loadCatalogProducts();
+        }
         setupCatalogFilters();
     }
 });
 
-function loadProductDetail() {
+// Fungsi utama untuk load product detail berdasarkan slug dari URL
+function loadProductDetailBySlug() {
+    // Ambil parameter 'name' dari URL
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = parseInt(urlParams.get('kode-produk'));
+    const productSlug = urlParams.get('name');
     
-    // Cari produk dari data utama (window.productsData atau products)
+    if (!productSlug) {
+        // Jika tidak ada slug, redirect ke catalog
+        console.error('No product slug provided');
+        window.location.href = 'catalog.html';
+        return;
+    }
+    
+    // Cari produk berdasarkan slug
     let product = null;
-    if (typeof window.productsData !== 'undefined') {
-        product = window.productsData.find(p => p.id === productId);
-    } else if (typeof products !== 'undefined') {
-        product = products.find(p => p.id === productId);
+    
+    // Cek apakah data produk tersedia dari window.productsDatabase
+    if (typeof window.productsDatabase !== 'undefined') {
+        product = window.productsDatabase.find(p => p.slug === productSlug);
+    } 
+    // Fallback ke window.productsData jika ada
+    else if (typeof window.productsData !== 'undefined') {
+        // Jika productsData masih menggunakan id, konversi ke slug search
+        product = window.productsData.find(p => 
+            p.slug === productSlug || 
+            p.name.toLowerCase().replace(/\s+/g, '-') === productSlug
+        );
     }
     
     if (product) {
-        // Ambil data gallery spesifik untuk produk ini
-        const galleryData = productGalleryData[productId] || {
-            main: product.image,
-            gallery: [product.image, product.image, product.image, product.image],
-            description: `<p>${product.description}</p>`
-        };
+        renderProductDetail(product);
         
-        // Update info produk
-        document.getElementById('productName').textContent = product.name;
-        document.getElementById('productPrice').innerHTML = `Rp ${product.price.toLocaleString('id-ID')}`;
-        document.getElementById('productCategory').textContent = product.category || 'Herbal';
+        // Update meta tags untuk SEO (opsional)
+        updateMetaTags(product);
         
-        // Set gambar utama
-        const mainImage = document.getElementById('mainImage');
-        if (mainImage) {
-            mainImage.src = galleryData.main;
-            mainImage.alt = product.name;
-        }
-        
-        // Simpan gallery images untuk navigasi modal
-        currentProductImages = galleryData.gallery;
-        
-        // Buat thumbnail gallery
-        const galleryContainer = document.getElementById('galleryContainer');
-        if (galleryContainer) {
-            galleryContainer.innerHTML = galleryData.gallery.map((img, index) => `
-                <img src="${img}" 
-                     alt="${product.name} - Gambar ${index + 1}" 
-                     class="gallery-thumb ${index === 0 ? 'active' : ''}" 
-                     onclick="changeMainImage(this)"
-                     data-fullimg="${img}">
-            `).join('');
-        }
-        
-        // Set deskripsi dengan HTML formatting
-        const descElement = document.getElementById('productDescription');
-        if (descElement) {
-            descElement.innerHTML = galleryData.description;
-        }
-        
-        // Set stok
-        const stockElement = document.getElementById('productStock');
-        if (stockElement) {
-            stockElement.textContent = 'Tersedia';
-        }
-        
-        // Simpan produk saat ini untuk keranjang
-        window.currentProductDetail = {
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image
-        };
+        // Simpan produk saat ini untuk digunakan fungsi lain
+        window.currentProductDetail = product;
     } else {
         // Produk tidak ditemukan
-        window.location.href = 'catalog.html';
+        console.error('Product not found:', productSlug);
+        showNotification('Produk tidak ditemukan', 'error');
+        
+        // Redirect ke catalog setelah 2 detik
+        setTimeout(() => {
+            window.location.href = 'catalog.html';
+        }, 2000);
     }
 }
 
-function changeQuantity(change) {
-    const quantityInput = document.getElementById('quantity');
-    let quantity = parseInt(quantityInput.value);
-    quantity += change;
+// Render product detail ke HTML
+function renderProductDetail(product) {
+    // Update judul halaman
+    document.title = `${product.name} - Fresh Herbal`;
     
-    if (quantity < 1) quantity = 1;
-    quantityInput.value = quantity;
-}
-
-function changeMainImage(element) {
+    // Set gambar utama
     const mainImage = document.getElementById('mainImage');
-    const imageSrc = element.getAttribute('data-fullimg') || element.src;
-    
-    if (mainImage && imageSrc) {
-        mainImage.src = imageSrc;
+    if (mainImage) {
+        mainImage.src = product.image_main || product.image;
+        mainImage.alt = product.name;
     }
     
-    // Update active thumbnail
-    document.querySelectorAll('.gallery-thumb').forEach(thumb => {
-        thumb.classList.remove('active');
-    });
-    element.classList.add('active');
+    // Set nama produk
+    const productName = document.getElementById('productName');
+    if (productName) productName.textContent = product.name;
+    
+    // Set harga (dengan diskon jika ada)
+    const productPrice = document.getElementById('productPrice');
+    if (productPrice) {
+        if (product.price_discount) {
+            productPrice.innerHTML = `
+                <span class="original-price" style="text-decoration: line-through; color: #999; font-size: 1rem;">Rp ${product.price.toLocaleString('id-ID')}</span><br>
+                <span class="discount-price" style="color: #e44d26; font-size: 1.8rem; font-weight: bold;">Rp ${product.price_discount.toLocaleString('id-ID')}</span>
+                <span class="discount-badge" style="background: #e44d26; color: white; padding: 4px 8px; border-radius: 20px; font-size: 0.8rem; margin-left: 10px;">
+                    Hemat ${Math.round((1 - product.price_discount/product.price) * 100)}%
+                </span>
+            `;
+        } else {
+            productPrice.innerHTML = `Rp ${product.price.toLocaleString('id-ID')}`;
+        }
+    }
+    
+    // Set deskripsi
+    const descElement = document.getElementById('productDescription');
+    if (descElement) {
+        descElement.innerHTML = product.description_full || `<p>${product.description_short}</p>`;
+    }
+    
+    // Set kategori
+    const categoryElement = document.getElementById('productCategory');
+    if (categoryElement) categoryElement.textContent = product.category;
+    
+    // Set stok
+    const stockElement = document.getElementById('productStock');
+    if (stockElement) {
+        if (product.stock > 0) {
+            stockElement.innerHTML = `<span style="color: #4caf50;">Tersedia (${product.stock} item)</span>`;
+        } else {
+            stockElement.innerHTML = '<span style="color: #f44336;">Stok Habis</span>';
+            // Disable tombol beli jika stok habis
+            const buyButton = document.querySelector('.btn-primary');
+            if (buyButton) {
+                buyButton.disabled = true;
+                buyButton.style.opacity = '0.5';
+                buyButton.style.cursor = 'not-allowed';
+            }
+        }
+    }
+    
+    // Tampilkan informasi tambahan (opsional)
+    renderAdditionalInfo(product);
+    
+    // Setup gallery images
+    setupProductGallery(product);
 }
 
-function addToCartFromDetail() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = parseInt(urlParams.get('kode-produk'));
-    const quantity = parseInt(document.getElementById('quantity').value);
-    
-    // Cari produk dari data utama
-    let product = null;
-    if (typeof window.productsData !== 'undefined') {
-        product = window.productsData.find(p => p.id === productId);
-    } else if (typeof products !== 'undefined') {
-        product = products.find(p => p.id === productId);
+// Render informasi tambahan produk
+function renderAdditionalInfo(product) {
+    // Buat container untuk informasi tambahan jika belum ada
+    let infoContainer = document.querySelector('.product-additional-info');
+    if (!infoContainer) {
+        const productInfoDiv = document.querySelector('.product-info');
+        if (productInfoDiv) {
+            const productActions = document.querySelector('.product-actions');
+            if (productActions) {
+                infoContainer = document.createElement('div');
+                infoContainer.className = 'product-additional-info';
+                infoContainer.style.marginTop = '2rem';
+                infoContainer.style.paddingTop = '1rem';
+                infoContainer.style.borderTop = '1px solid #eee';
+                productActions.insertAdjacentElement('afterend', infoContainer);
+            }
+        }
     }
     
-    if (product) {
+    if (infoContainer) {
+        infoContainer.innerHTML = `
+            <div class="info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                ${product.weight ? `
+                <div class="info-item">
+                    <i class="fas fa-weight-hanging" style="color: #6baf3c;"></i>
+                    <strong>Berat:</strong> ${product.weight}
+                </div>
+                ` : ''}
+                ${product.origin ? `
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt" style="color: #6baf3c;"></i>
+                    <strong>Asal:</strong> ${product.origin}
+                </div>
+                ` : ''}
+                ${product.sku ? `
+                <div class="info-item">
+                    <i class="fas fa-barcode" style="color: #6baf3c;"></i>
+                    <strong>SKU:</strong> ${product.sku}
+                </div>
+                ` : ''}
+                ${product.rating ? `
+                <div class="info-item">
+                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                    <strong>Rating:</strong> ${product.rating} / 5.0
+                </div>
+                ` : ''}
+            </div>
+            
+            ${product.ingredients ? `
+            <div class="ingredients-section" style="margin-top: 1.5rem;">
+                <h4 style="color: #2d5016; margin-bottom: 0.5rem;">
+                    <i class="fas fa-leaf"></i> Komposisi:
+                </h4>
+                <p>${product.ingredients}</p>
+            </div>
+            ` : ''}
+            
+            ${product.how_to_use ? `
+            <div class="how-to-use-section" style="margin-top: 1.5rem;">
+                <h4 style="color: #2d5016; margin-bottom: 0.5rem;">
+                    <i class="fas fa-mortar-pestle"></i> Cara Penggunaan:
+                </h4>
+                <p>${product.how_to_use}</p>
+            </div>
+            ` : ''}
+            
+            ${product.storage ? `
+            <div class="storage-section" style="margin-top: 1.5rem;">
+                <h4 style="color: #2d5016; margin-bottom: 0.5rem;">
+                    <i class="fas fa-box"></i> Cara Penyimpanan:
+                </h4>
+                <p>${product.storage}</p>
+            </div>
+            ` : ''}
+            
+            ${product.certificate ? `
+            <div class="certificate-section" style="margin-top: 1.5rem; padding: 1rem; background: #f5f5f5; border-radius: 8px;">
+                <i class="fas fa-certificate" style="color: #6baf3c;"></i>
+                <strong>Sertifikasi:</strong> ${product.certificate}
+            </div>
+            ` : ''}
+        `;
+    }
+}
+
+// Setup gallery produk
+function setupProductGallery(product) {
+    const galleryContainer = document.getElementById('galleryContainer');
+    const galleryImages = product.gallery || [product.image_main || product.image];
+    
+    if (galleryContainer && galleryImages.length > 0) {
+        galleryContainer.innerHTML = galleryImages.map((img, index) => `
+            <img src="${img}" 
+                 alt="${product.name} - Gambar ${index + 1}" 
+                 class="gallery-thumb ${index === 0 ? 'active' : ''}" 
+                 onclick="changeMainImage(this)"
+                 data-fullimg="${img}">
+        `).join('');
+        
+        // Simpan untuk navigasi modal
+        window.currentProductImages = galleryImages;
+    }
+}
+
+// Update meta tags untuk SEO
+function updateMetaTags(product) {
+    // Update meta description
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.name = 'description';
+        document.head.appendChild(metaDesc);
+    }
+    metaDesc.content = product.meta_description || product.description_short;
+    
+    // Update meta keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+        metaKeywords = document.createElement('meta');
+        metaKeywords.name = 'keywords';
+        document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.content = `${product.name}, herbal, ${product.category}, kesehatan alami, fresh herbal`;
+    
+    // Update og:tags
+    updateOrCreateMetaTag('property', 'og:title', product.name);
+    updateOrCreateMetaTag('property', 'og:description', product.meta_description || product.description_short);
+    updateOrCreateMetaTag('property', 'og:image', product.image_main || product.image);
+    updateOrCreateMetaTag('property', 'og:url', window.location.href);
+}
+
+function updateOrCreateMetaTag(attr, attrValue, content) {
+    let meta = document.querySelector(`meta[${attr}="${attrValue}"]`);
+    if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute(attr, attrValue);
+        document.head.appendChild(meta);
+    }
+    meta.content = content;
+}
+
+// Fungsi untuk menambah ke keranjang dari product detail
+function addToCartFromDetail() {
+    const product = window.currentProductDetail;
+    const quantity = parseInt(document.getElementById('quantity')?.value || 1);
+    
+    if (product && product.stock > 0) {
         const cartProduct = {
             id: product.id,
             name: product.name,
-            price: product.price,
-            image: product.image,
+            price: product.price_discount || product.price,
+            image: product.image_main || product.image,
+            slug: product.slug,
             quantity: quantity
         };
         
-        // Gunakan fungsi addToCart dari main.js
+        // Gunakan fungsi global addToCart
         if (typeof window.addToCart === 'function') {
             window.addToCart(cartProduct);
         } else {
-            // Fallback jika fungsi tidak tersedia
+            // Fallback ke localStorage
             let cart = JSON.parse(localStorage.getItem('freshHerbalCart')) || [];
             const existingItem = cart.find(item => item.id === product.id);
             
@@ -200,224 +310,71 @@ function addToCartFromDetail() {
                 window.updateCartCount();
             }
             
-            if (typeof window.showNotification === 'function') {
-                window.showNotification(`${product.name} ditambahkan ke keranjang!`, 'success');
-            } else {
-                alert(`${product.name} ditambahkan ke keranjang!`);
-            }
+            showNotification(`${product.name} ditambahkan ke keranjang!`, 'success');
         }
+    } else if (product && product.stock === 0) {
+        showNotification('Maaf, stok produk ini sedang habis', 'error');
     }
 }
 
-// ========== FUNGSI MODAL ZOOM GAMBAR ==========
-
-function setupModalEvents() {
-    // Close modal when clicking the close button
-    const modalClose = document.querySelector('.modal-close');
-    if (modalClose) {
-        modalClose.addEventListener('click', closeModal);
+// Helper untuk show notification jika belum ada
+function showNotification(message, type = 'success') {
+    // Cek apakah fungsi global sudah ada
+    if (typeof window.showNotification === 'function') {
+        window.showNotification(message, type);
+        return;
     }
     
-    // Close modal when clicking outside the image
-    const modal = document.getElementById('imageModal');
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-    }
+    // Buat notification sederhana
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer;">&times;</button>
+    `;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#4caf50' : '#f44336'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 1000;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        animation: slideIn 0.3s ease;
+    `;
     
-    // Keyboard navigation for modal
-    document.addEventListener('keydown', function(e) {
-        const modal = document.getElementById('imageModal');
-        if (modal && modal.style.display === 'flex') {
-            if (e.key === 'Escape') {
-                closeModal();
-            } else if (e.key === 'ArrowLeft') {
-                navigateModal(-1);
-            } else if (e.key === 'ArrowRight') {
-                navigateModal(1);
-            }
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
         }
-    });
+    }, 3000);
 }
 
-function openModal() {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    const currentMainImage = document.getElementById('mainImage').src;
-    
-    // Find index of current image in gallery
-    currentModalIndex = currentProductImages.findIndex(img => img === currentMainImage);
-    if (currentModalIndex === -1) currentModalIndex = 0;
-    
-    if (modal && modalImg) {
-        modal.style.display = 'flex';
-        modalImg.src = currentProductImages[currentModalIndex];
-        
-        // Prevent body scroll when modal is open
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('imageModal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-}
-
-function navigateModal(direction) {
-    currentModalIndex += direction;
-    
-    if (currentModalIndex < 0) {
-        currentModalIndex = currentProductImages.length - 1;
-    } else if (currentModalIndex >= currentProductImages.length) {
-        currentModalIndex = 0;
-    }
-    
-    const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.src = currentProductImages[currentModalIndex];
-    }
-}
-
-// Expose functions to global scope
-window.changeQuantity = changeQuantity;
-window.changeMainImage = changeMainImage;
+// Export fungsi ke global
+window.loadProductDetailBySlug = loadProductDetailBySlug;
 window.addToCartFromDetail = addToCartFromDetail;
-window.openModal = openModal;
-window.closeModal = closeModal;
-window.navigateModal = navigateModal;
+window.renderProductDetail = renderProductDetail;
 
-// Catalog Page Functions
-function loadCatalogProducts(filteredProducts = null) {
-    const container = document.getElementById('productsContainer');
-    
-    if (!container) return;
-    
-    // Ambil data produk dari window atau global
-    let productsData = null;
-    if (typeof window.productsData !== 'undefined') {
-        productsData = window.productsData;
-    } else if (typeof products !== 'undefined') {
-        productsData = products;
-    }
-    
-    if (!productsData) return;
-    
-    const productsToShow = filteredProducts || productsData;
-    
-    container.innerHTML = productsToShow.map(product => `
-        <div class="product-card">
-            <img src="${product.image}" alt="${product.name}" class="product-image">
-            <div class="product-info">
-                <h3 class="product-title">${product.name}</h3>
-                <p class="product-category">${product.category || 'Herbal'}</p>
-                <p class="product-price">Rp ${product.price.toLocaleString('id-ID')}</p>
-                <div class="product-actions">
-                    <button onclick="viewProduct(${product.id})" class="btn btn-secondary">
-                        <i class="fas fa-eye"></i> Detail
-                    </button>
-                    <button onclick="addToCartById(${product.id})" class="btn btn-primary">
-                        <i class="fas fa-cart-plus"></i> Beli
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
+// Helper function untuk buat link produk dengan slug
+function getProductUrl(productSlug) {
+    return `product-detail.html?name=${productSlug}`;
 }
 
-function addToCartById(productId) {
-    let productsData = null;
-    if (typeof window.productsData !== 'undefined') {
-        productsData = window.productsData;
-    } else if (typeof products !== 'undefined') {
-        productsData = products;
-    }
-    
-    const product = productsData?.find(p => p.id === productId);
-    if (product && typeof window.addToCart === 'function') {
-        window.addToCart({
-            id: product.id,
+// Function untuk generate semua link produk (digunakan di catalog atau sitemap)
+function generateProductLinks() {
+    if (typeof window.productsDatabase !== 'undefined') {
+        return window.productsDatabase.map(product => ({
             name: product.name,
-            price: product.price,
-            image: product.image,
-            quantity: 1
-        });
+            url: getProductUrl(product.slug),
+            slug: product.slug
+        }));
     }
+    return [];
 }
-
-function setupCatalogFilters() {
-    const categoryFilter = document.getElementById('categoryFilter');
-    const searchInput = document.getElementById('searchInput');
-    const sortFilter = document.getElementById('sortFilter');
-    
-    if (categoryFilter) {
-        categoryFilter.addEventListener('change', filterProducts);
-    }
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', filterProducts);
-    }
-    
-    if (sortFilter) {
-        sortFilter.addEventListener('change', filterProducts);
-    }
-}
-
-function filterProducts() {
-    let productsData = null;
-    if (typeof window.productsData !== 'undefined') {
-        productsData = window.productsData;
-    } else if (typeof products !== 'undefined') {
-        productsData = products;
-    }
-    
-    if (!productsData) return;
-    
-    const category = document.getElementById('categoryFilter')?.value || '';
-    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    const sortBy = document.getElementById('sortFilter')?.value || 'name';
-    
-    let filtered = [...productsData];
-    
-    // Filter by category
-    if (category) {
-        filtered = filtered.filter(product => product.category === category);
-    }
-    
-    // Filter by search term
-    if (searchTerm) {
-        filtered = filtered.filter(product => 
-            product.name.toLowerCase().includes(searchTerm) ||
-            (product.description && product.description.toLowerCase().includes(searchTerm))
-        );
-    }
-    
-    // Sort products
-    filtered.sort((a, b) => {
-        switch (sortBy) {
-            case 'name':
-                return a.name.localeCompare(b.name);
-            case 'price-low':
-                return a.price - b.price;
-            case 'price-high':
-                return b.price - a.price;
-            default:
-                return 0;
-        }
-    });
-    
-    loadCatalogProducts(filtered);
-}
-
-function viewProduct(productId) {
-    window.location.href = `product-detail.html?id=${productId}`;
-}
-
-// Expose catalog functions
-window.viewProduct = viewProduct;
-window.addToCartById = addToCartById;
