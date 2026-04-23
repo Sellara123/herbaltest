@@ -125,7 +125,7 @@ const productsDatabase = [
     },
     {
         id: 5,
-        name: "Jahe Merah Instan",
+        name: "Madu Bawang Hitam Tunggal",
         slug: "jahe-merah-instan",
         category: "Minuman",
         price: 55000,
