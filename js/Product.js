@@ -4,13 +4,11 @@
 // Jika menggunakan file terpisah, pastikan untuk memuat products-data.js terlebih dahulu
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Cek apakah di halaman product detail
     if (window.location.pathname.includes('product-detail.html')) {
         loadProductDetailBySlug();
-        setupModalEvents();
+        setupModal();  // ✅ Ganti dengan setupModal
     }
     
-    // Cek apakah di halaman katalog
     if (window.location.pathname.includes('catalog.html')) {
         if (typeof loadCatalogProducts === 'function') {
             loadCatalogProducts();
@@ -219,7 +217,7 @@ function renderAdditionalInfo(product) {
     }
 }
 
-// Setup gallery produk
+// LINE 128-160 - KODE BARU (DIPERBAIKI)
 function setupProductGallery(product) {
     const galleryContainer = document.getElementById('galleryContainer');
     const galleryImages = product.gallery || [product.image_main || product.image];
@@ -229,12 +227,144 @@ function setupProductGallery(product) {
             <img src="${img}" 
                  alt="${product.name} - Gambar ${index + 1}" 
                  class="gallery-thumb ${index === 0 ? 'active' : ''}" 
-                 onclick="changeMainImage(this)"
-                 data-fullimg="${img}">
+                 data-fullimg="${img}"
+                 data-index="${index}">
         `).join('');
         
         // Simpan untuk navigasi modal
         window.currentProductImages = galleryImages;
+        
+        // ========== PERBAIKAN: Event listener untuk thumbnail ==========
+        // Hapus onclick dari HTML, gunakan event listener JavaScript
+        document.querySelectorAll('.gallery-thumb').forEach(thumb => {
+            thumb.removeEventListener('click', handleThumbClick);
+            thumb.addEventListener('click', handleThumbClick);
+        });
+    }
+}
+
+// Fungsi untuk handle klik thumbnail (GANTI GAMBAR UTAMA, BUKAN POPUP)
+function handleThumbClick(e) {
+    e.stopPropagation();
+    const thumb = this;
+    const newImageSrc = thumb.getAttribute('data-fullimg');
+    const mainImage = document.getElementById('mainImage');
+    
+    if (mainImage && newImageSrc) {
+        mainImage.src = newImageSrc;
+    }
+    
+    // Update active class
+    document.querySelectorAll('.gallery-thumb').forEach(t => {
+        t.classList.remove('active');
+    });
+    thumb.classList.add('active');
+}
+
+// Fungsi untuk setup modal (ZOOM gambar)
+function setupModal() {
+    const modal = document.getElementById('imageModal');
+    const mainImage = document.getElementById('mainImage');
+    const modalImg = document.getElementById('modalImage');
+    const closeBtn = document.querySelector('.modal-close');
+    const prevBtn = document.querySelector('.modal-prev');
+    const nextBtn = document.querySelector('.modal-next');
+    
+    if (!modal || !mainImage) return;
+    
+    // Hapus onclick dari HTML mainImage jika ada
+    mainImage.removeAttribute('onclick');
+    
+    // Klik gambar utama -> buka modal (ZOOM)
+    mainImage.onclick = function() {
+        modal.style.display = 'flex';
+        if (modalImg) {
+            modalImg.src = mainImage.src;
+        }
+        document.body.style.overflow = 'hidden';
+        
+        // Cari index gambar saat ini
+        const thumbs = document.querySelectorAll('.gallery-thumb');
+        for (let i = 0; i < thumbs.length; i++) {
+            if (thumbs[i].getAttribute('data-fullimg') === mainImage.src) {
+                window.currentModalIndex = i;
+                break;
+            }
+        }
+    };
+    
+    // Tombol close
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        };
+    }
+    
+    // Tombol prev
+    if (prevBtn) {
+        prevBtn.onclick = function(e) {
+            e.stopPropagation();
+            navigateModalImage(-1);
+        };
+    }
+    
+    // Tombol next
+    if (nextBtn) {
+        nextBtn.onclick = function(e) {
+            e.stopPropagation();
+            navigateModalImage(1);
+        };
+    }
+    
+    // Klik di luar modal -> tutup
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    };
+    
+    // Keyboard navigation
+    document.removeEventListener('keydown', handleModalKeydown);
+    document.addEventListener('keydown', handleModalKeydown);
+}
+
+// Navigasi gambar dalam modal
+let currentModalIndex = 0;
+
+function navigateModalImage(direction) {
+    const modalImg = document.getElementById('modalImage');
+    const thumbs = document.querySelectorAll('.gallery-thumb');
+    
+    if (!modalImg || thumbs.length === 0) return;
+    
+    currentModalIndex += direction;
+    
+    if (currentModalIndex < 0) {
+        currentModalIndex = thumbs.length - 1;
+    } else if (currentModalIndex >= thumbs.length) {
+        currentModalIndex = 0;
+    }
+    
+    const newSrc = thumbs[currentModalIndex].getAttribute('data-fullimg');
+    if (newSrc) {
+        modalImg.src = newSrc;
+    }
+}
+
+// Keyboard handler untuk modal
+function handleModalKeydown(e) {
+    const modal = document.getElementById('imageModal');
+    if (modal && modal.style.display === 'flex') {
+        if (e.key === 'Escape') {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        } else if (e.key === 'ArrowLeft') {
+            navigateModalImage(-1);
+        } else if (e.key === 'ArrowRight') {
+            navigateModalImage(1);
+        }
     }
 }
 
