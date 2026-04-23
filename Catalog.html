@@ -317,6 +317,26 @@
             animation: slideInRight 0.3s ease;
         }
 
+        .loading-spinner {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2e7d32;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @keyframes slideInRight {
             from {
                 transform: translateX(100%);
@@ -375,7 +395,12 @@
 
     <section class="catalog-products">
         <div class="container">
-            <div class="products-grid" id="productsContainer"></div>
+            <div class="products-grid" id="productsContainer">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Memuat produk...</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -405,136 +430,98 @@
         </div>
     </footer>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
-        // ==================== DATA PRODUK DENGAN SLUG ====================
-        // Setiap produk punya slug yang unik untuk direct ke product-detail.html?name=slug
-        const products = [
-            {
-                id: 1,
-                name: "Madu Alami Premium",
-                slug: "madu-alami-premium",  // -> product-detail.html?name=madu-alami-premium
-                category: "Madu",
-                price: 85000,
-                price_discount: null,
-                stock: 25,
-                image: "https://imagizer.imageshack.com/img923/622/KjYf80.jpg"
-            },
-            {
-                id: 2,
-                name: "Black Garlic (Bawang Hitam)",
-                slug: "bawang-hitam",  // -> product-detail.html?name=bawang-hitam
-                category: "Bawang Hitam",
-                price: 120000,
-                price_discount: 99000,
-                stock: 15,
-                image: "https://imagizer.imageshack.com/img923/7346/r50f6F.png"
-            },
-            {
-                id: 3,
-                name: "Acar Bawang Tunggal",
-                slug: "Acar-Bawang-Tunggal",  // -> product-detail.html?name=kunyit-bubuk
-                category: "Bubuk",
-                price: 45000,
-                price_discount: 39900,
-                stock: 40,
-                image: "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
-            },
-            {
-                id: 4,
-                name: "Temulawak Segar",
-                slug: "temulawak-segar",  // -> product-detail.html?name=temulawak-segar
-                category: "Rimpang",
-                price: 35000,
-                price_discount: null,
-                stock: 30,
-                image: "https://imagizer.imageshack.com/img922/3025/KTm2iB.png"
-            },
-            {
-                id: 5,
-                name: "Madu Bawang Hitam Tunggal",
-                slug: "madu-bawang-hitam",  // -> product-detail.html?name=jahe-merah-instan
-                category: "Minuman",
-                price: 55000,
-                price_discount: 49000,
-                stock: 50,
-                image: "https://imagizer.imageshack.com/img923/622/KjYf80.jpg"
-            },
-            {
-                id: 6,
-                name: "Sari Kunyit Asam",
-                slug: "sari-kunyit-asam",  // -> product-detail.html?name=sari-kunyit-asam
-                category: "Minuman",
-                price: 48000,
-                price_discount: null,
-                stock: 35,
-                image: "https://imagizer.imageshack.com/img922/6064/NcUFXj.png"
-            }
-        ];
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
+            authDomain: "fresh-herbal-2024.firebaseapp.com",
+            databaseURL: "https://fresh-herbal-2024-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "fresh-herbal-2024",
+            storageBucket: "fresh-herbal-2024.firebasestorage.app",
+            messagingSenderId: "767982509787",
+            appId: "1:767982509787:web:6c16a655c1b4f6303c76fe"
+        };
 
-        // Ambil unique categories
-        const categories = ['all', ...new Set(products.map(p => p.category))];
-        const categorySelect = document.getElementById('categoryFilter');
-        categorySelect.innerHTML = categories.map(cat => 
-            `<option value="${cat}">${cat === 'all' ? 'Semua Kategori' : cat}</option>`
-        ).join('');
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const productsRef = database.ref('products');
 
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let allProducts = [];
+        let categories = new Set();
 
-        function updateCartCount() {
-            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
+        // Fungsi untuk load semua produk dari Firebase
+        function loadProductsFromFirebase() {
+            productsRef.once('value')
+                .then((snapshot) => {
+                    const products = snapshot.val();
+                    allProducts = [];
+                    categories.clear();
+                    categories.add('all');
 
-        function addToCart(productId, quantity = 1) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            
-            const existingItem = cart.find(item => item.id === productId);
-            if (existingItem) {
-                existingItem.quantity += quantity;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price_discount || product.price,
-                    image: product.image,
-                    quantity: quantity
+                    if (products) {
+                        Object.keys(products).forEach(key => {
+                            const product = products[key];
+                            product.firebaseId = key;
+                            allProducts.push(product);
+                            
+                            if (product.category) {
+                                categories.add(product.category);
+                            }
+                        });
+                    }
+
+                    // Update dropdown kategori
+                    updateCategoryFilter();
+                    
+                    // Render produk
+                    renderProducts();
+                })
+                .catch((error) => {
+                    console.error("Error loading products:", error);
+                    document.getElementById('productsContainer').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-database" style="font-size: 48px; margin-bottom: 1rem;"></i>
+                            <p>Gagal memuat data produk. Periksa koneksi Anda.</p>
+                            <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 20px;">Coba Lagi</button>
+                        </div>
+                    `;
                 });
-            }
-            updateCartCount();
-            showToast(`${product.name} ditambahkan ke keranjang!`);
         }
 
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast-message';
-            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        // Update dropdown kategori
+        function updateCategoryFilter() {
+            const categorySelect = document.getElementById('categoryFilter');
+            const sortedCategories = Array.from(categories).sort();
+            
+            categorySelect.innerHTML = sortedCategories.map(cat => 
+                `<option value="${cat}">${cat === 'all' ? 'Semua Kategori' : cat}</option>`
+            ).join('');
         }
 
-        // ========== FUNGSI UTAMA: DIRECT KE PRODUCT DETAIL DENGAN SLUG ==========
-        function goToProductDetail(slug) {
-            // Redirect ke halaman product-detail.html dengan parameter name=slug
-            // Contoh: product-detail.html?name=bawang-hitam
-            window.location.href = `product-detail.html?name=${slug}`;
-        }
-
+        // Fungsi untuk menampilkan produk
         function renderProducts() {
             const category = document.getElementById('categoryFilter').value;
             const search = document.getElementById('searchInput').value.toLowerCase();
             const sort = document.getElementById('sortFilter').value;
             
-            let filtered = [...products];
+            let filtered = [...allProducts];
             
+            // Filter kategori
             if (category !== 'all') {
                 filtered = filtered.filter(p => p.category === category);
             }
             
+            // Filter pencarian
             if (search) {
                 filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
             }
             
+            // Sorting
             if (sort === 'name') {
                 filtered.sort((a, b) => a.name.localeCompare(b.name));
             } else if (sort === 'price-low') {
@@ -552,28 +539,28 @@
             
             container.innerHTML = filtered.map(product => {
                 const finalPrice = product.price_discount || product.price;
-                const hasDiscount = product.price_discount !== null;
+                const hasDiscount = product.price_discount && product.price_discount < product.price;
                 const discountPercent = hasDiscount ? Math.round((1 - product.price_discount/product.price) * 100) : 0;
                 
                 return `
                 <div class="product-card" data-slug="${product.slug}">
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <img src="${product.image_main || product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=No+Image'">
                     <div class="product-info">
                         <h3 class="product-title">${product.name}</h3>
-                        <p class="product-category"><i class="fas fa-tag"></i> ${product.category}</p>
+                        <p class="product-category"><i class="fas fa-tag"></i> ${product.category || 'Herbal'}</p>
                         <p class="product-price">
                             ${hasDiscount ? 
                                 `<span class="original-price">Rp ${product.price.toLocaleString('id-ID')}</span>
                                 <span class="discount-price">Rp ${product.price_discount.toLocaleString('id-ID')}</span>
                                 <span class="discount-badge">-${discountPercent}%</span>` : 
-                                `Rp ${product.price.toLocaleString('id-ID')}`}
+                                `Rp ${finalPrice.toLocaleString('id-ID')}`}
                         </p>
                         <div class="product-actions">
                             <button class="btn btn-secondary detail-product-btn" data-slug="${product.slug}">
                                 <i class="fas fa-eye"></i> Detail
                             </button>
-                            <button class="btn btn-primary add-to-cart-btn" data-id="${product.id}" data-name="${product.name}">
-                                <i class="fas fa-shopping-cart"></i> Beli
+                            <button class="btn btn-primary buy-now-btn" data-slug="${product.slug}" data-name="${product.name}" data-url="${product.orderonline_url || ''}">
+                                <i class="fab fa-whatsapp"></i> Beli
                             </button>
                         </div>
                     </div>
@@ -581,33 +568,39 @@
                 `;
             }).join('');
             
-            // Event listener untuk tombol DETAIL - direct ke product detail
+            // Event listener untuk tombol DETAIL
             document.querySelectorAll('.detail-product-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const slug = btn.getAttribute('data-slug');
-                    goToProductDetail(slug);
+                    window.location.href = `product-detail.html?name=${slug}`;
                 });
             });
             
-            // Event listener untuk tombol BELI - tambah ke keranjang
-            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            // Event listener untuk tombol BELI (WhatsApp)
+            document.querySelectorAll('.buy-now-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const id = parseInt(btn.getAttribute('data-id'));
-                    addToCart(id, 1);
+                    const productName = btn.getAttribute('data-name');
+                    const customUrl = btn.getAttribute('data-url');
+                    
+                    if (customUrl && customUrl !== '') {
+                        window.location.href = customUrl;
+                    } else {
+                        const message = `Halo Fresh Herbal, saya ingin membeli ${productName}`;
+                        window.location.href = `https://wa.me/6285649589679?text=${encodeURIComponent(message)}`;
+                    }
                 });
             });
             
-            // Event listener untuk klik card - juga direct ke product detail
+            // Event listener untuk klik card - direct ke product detail
             document.querySelectorAll('.product-card').forEach(card => {
                 card.addEventListener('click', (e) => {
-                    // Jangan redirect jika yang diklik adalah tombol
-                    if (e.target.closest('.add-to-cart-btn')) return;
                     if (e.target.closest('.detail-product-btn')) return;
+                    if (e.target.closest('.buy-now-btn')) return;
                     
                     const slug = card.getAttribute('data-slug');
-                    goToProductDetail(slug);
+                    window.location.href = `product-detail.html?name=${slug}`;
                 });
             });
         }
@@ -622,9 +615,8 @@
             document.querySelector('.main-nav').classList.toggle('active');
         });
         
-        // Render produk pertama kali
-        renderProducts();
-        updateCartCount();
+        // Load produk dari Firebase
+        loadProductsFromFirebase();
     </script>
 </body>
 </html>
