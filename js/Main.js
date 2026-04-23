@@ -1,5 +1,71 @@
 // Main JavaScript File for Fresh Herbal
 
+// main.js - Tambahkan di bagian atas file atau di DOMContentLoaded
+
+// Load products data terlebih dahulu
+// Pastikan untuk memuat file products-data.js sebelum main.js
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load data produk dari productsDatabase jika ada
+    if (typeof window.productsDatabase !== 'undefined') {
+        window.productsData = window.productsDatabase;
+    }
+    
+    // Initialize semua komponen
+    initMobileMenu();
+    initCart();
+    loadFeaturedProducts();
+    initForms();
+    updateCartCount();
+});
+
+// Update fungsi loadFeaturedProducts untuk menggunakan slug
+function loadFeaturedProducts() {
+    const featuredContainer = document.getElementById('featuredProducts');
+    
+    if (!featuredContainer) return;
+    
+    // Gunakan productsDatabase jika ada
+    let products = window.productsDatabase || window.productsData || [];
+    const featuredProducts = products.filter(product => product.featured).slice(0, 3);
+    
+    featuredContainer.innerHTML = featuredProducts.map(product => `
+        <div class="product-card">
+            <img src="${product.image_main || product.image}" alt="${product.name}" class="product-image">
+            <div class="product-info">
+                <h3 class="product-title">${product.name}</h3>
+                <p class="product-price">Rp ${(product.price_discount || product.price).toLocaleString('id-ID')}</p>
+                <div class="product-actions">
+                    <button onclick="viewProductBySlug('${product.slug}')" class="btn btn-secondary">
+                        <i class="fas fa-eye"></i> Detail
+                    </button>
+                    <button onclick="addToCartFromList(${product.id})" class="btn btn-primary">
+                        <i class="fas fa-cart-plus"></i> Beli
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Fungsi view product menggunakan slug
+function viewProductBySlug(slug) {
+    window.location.href = `product-detail.html?name=${slug}`;
+}
+
+// Override viewProduct yang lama
+window.viewProduct = function(productId) {
+    // Cari produk berdasarkan id untuk mendapatkan slug
+    let products = window.productsDatabase || window.productsData || [];
+    const product = products.find(p => p.id === productId);
+    if (product && product.slug) {
+        viewProductBySlug(product.slug);
+    } else {
+        // Fallback ke cara lama
+        window.location.href = `product-detail.html?kode-produk=${productId}`;
+    }
+};
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all components
