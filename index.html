@@ -101,14 +101,226 @@
             text-decoration: underline;
         }
 
-        /* responsive untuk HP */
-        @media (max-width: 576px) {
-            .video-popup {
-                width: calc(100% - 40px);
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
+        /* Banner Slider - Hanya Foto Ukuran 400x100px */
+        .banner-slider-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            overflow: hidden;
+            position: relative;
+            border-radius: 10px;
+            cursor: grab;
+        }
+
+        .banner-slider-container:active {
+            cursor: grabbing;
+        }
+
+        .banner-slider-track {
+            display: flex;
+            transition: transform 0.5s ease;
+            will-change: transform;
+        }
+
+        .banner-slide {
+            flex-shrink: 0;
+            width: 400px;
+            height: 100px;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .banner-dots {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            cursor: pointer;
+        }
+
+        .banner-dot.active {
+            background: #2e7d32;
+        }
+
+        /* Testimoni Popup Modal - Auto Muncul */
+        .testimoni-popup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 100000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .testimoni-popup-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
             }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .testimoni-popup-header {
+            background: #2e7d32;
+            color: white;
+            padding: 20px;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .testimoni-popup-header h3 {
+            margin: 0;
+        }
+
+        .close-testimoni-popup {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .testimoni-popup-body {
+            padding: 20px;
+        }
+
+        .testimoni-popup-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        .testimoni-popup-item:last-child {
+            border-bottom: none;
+        }
+
+        .testimoni-popup-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .testimoni-popup-rating {
+            color: #ffc107;
+            margin: 5px 0;
+        }
+
+        /* Testimoni Footer Grid (3 testimoni) */
+        .testimoni-footer-section {
+            background: #f9f9f9;
+            padding: 50px 0;
+            margin-top: 50px;
+        }
+
+        .testimoni-footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .testimoni-footer-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .testimoni-footer-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .more-testimoni-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .more-testimoni-link a {
+            background: #2e7d32;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .banner-slider-container {
+                max-width: 100%;
+                margin: 10px auto;
+            }
+            .banner-slide {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4/1;
+            }
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2e7d32;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .text-center {
+            text-align: center;
         }
     </style>
 </head>
@@ -141,26 +353,18 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h2>Kesehatan Alami untuk Hidup Lebih Sehat</h2>
-                <p>Temukan berbagai produk herbal berkualitas tinggi untuk menjaga kesehatan Anda dan keluarga</p>
-                <a href="catalog.html" class="btn btn-primary">Lihat Produk</a>
-            </div>
-        </div>
-    </section>
+    <!-- Banner Slider -->
+    <div class="banner-slider-container" id="bannerSlider">
+        <div class="banner-slider-track" id="bannerTrack"></div>
+        <div class="banner-dots" id="bannerDots"></div>
+    </div>
 
     <!-- Featured Products -->
     <section class="featured-products">
         <div class="container">
             <h2 class="section-title">Produk Unggulan</h2>
             <div class="products-grid" id="featuredProducts">
-                <div style="text-align: center; padding: 40px;">
-                    <div class="spinner"></div>
-                    <p>Memuat produk unggulan...</p>
-                </div>
+                <div class="text-center"><div class="spinner"></div><p>Memuat produk unggulan...</p></div>
             </div>
         </div>
     </section>
@@ -194,6 +398,19 @@
         </div>
     </section>
 
+    <!-- Testimoni Footer Section (3 testimoni + link ke dashboard) -->
+    <section class="testimoni-footer-section">
+        <div class="container">
+            <h2 class="section-title">Apa Kata Mereka?</h2>
+            <div class="testimoni-footer-grid" id="testimoniFooterGrid">
+                <div class="text-center"><div class="spinner"></div><p>Memuat testimoni...</p></div>
+            </div>
+            <div class="more-testimoni-link">
+                <a href="dashboard.html"><i class="fas fa-comments"></i> Lihat Semua Testimoni</a>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="main-footer">
         <div class="container">
@@ -207,8 +424,7 @@
                 </div>
                 <div class="footer-section">
                     <h3>Kontak Kami</h3>
-                    <p><i class="fas fa-map-marker-alt"></i>Ds Watukenongo, Kec Pungging,
-Kab Mojokerto, Jawa timur 68166</p>
+                    <p><i class="fas fa-map-marker-alt"></i>Ds Watukenongo, Kec Pungging, Kab Mojokerto, Jawa timur 68166</p>
                     <p><i class="fas fa-phone"></i>+62 856-4958-9679</p>
                     <p><i class="fas fa-envelope"></i>freshherbalblackgarlic@gmail.com</p>
                 </div>
@@ -225,20 +441,32 @@ Kab Mojokerto, Jawa timur 68166</p>
         </div>
     </footer>
 
-    <!-- ===== POPUP VIDEO DENGAN FILE LOKAL ===== -->
+    <!-- POPUP VIDEO PROMO -->
     <div class="video-popup" id="videoPopup">
         <div class="popup-header">
-            <span><i class="fas fa-play-circle"></i> Promo Bawang Hitam</span>
+            <span><i class="fas fa-play-circle"></i> <span id="promoText">Promo Spesial</span></span>
             <button class="close-popup" id="closePopupBtn">&times;</button>
         </div>
         <div class="video-container">
-            <video id="videoIklan" controls autoplay muted loop playsinline>
-                <source src="bawang hitam 500 (1).mp4" type="video/mp4">
-                <p>Browser tidak mendukung video atau file tidak ditemukan.</p>
+            <video id="promoVideo" autoplay muted loop playsinline disableRemotePlayback controlslist="nodownload">
+                <source src="" type="video/mp4">
             </video>
         </div>
         <div class="popup-footer">
-            ⏳ Bawang Hitam 500g Rp 95.000 <a href="catalog.html">Beli Sekarang</a>
+            <span id="promoFooterText"></span> <a href="#" id="promoLink">Beli Sekarang</a>
+        </div>
+    </div>
+
+    <!-- Testimoni Popup Modal - Auto Muncul -->
+    <div class="testimoni-popup-modal" id="testimoniPopup" style="display: none;">
+        <div class="testimoni-popup-content">
+            <div class="testimoni-popup-header">
+                <h3><i class="fas fa-star"></i> Testimoni Pelanggan</h3>
+                <button class="close-testimoni-popup" id="closeTestimoniPopup">&times;</button>
+            </div>
+            <div class="testimoni-popup-body" id="testimoniPopupBody">
+                <div class="text-center"><div class="spinner"></div><p>Memuat testimoni...</p></div>
+            </div>
         </div>
     </div>
 
@@ -261,70 +489,239 @@ Kab Mojokerto, Jawa timur 68166</p>
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Load produk unggulan (featured = true)
+        // ============ VIDEO PROMO (FILE LOKAL) ============
+        // GANTI NAMA VIDEO SESUAI FILE YANG TERSEDIA
+        const VIDEO_FILE = "bawang hitam 250 (1).mp4";
+        const VIDEO_TEXT = "Promo Bawang Hitam 250gr";
+        const VIDEO_LINK = "https://wa.me/6285649589679";
+
+        function loadPromoVideo() {
+            const video = document.getElementById('promoVideo');
+            const promoText = document.getElementById('promoText');
+            const promoFooterText = document.getElementById('promoFooterText');
+            const promoLink = document.getElementById('promoLink');
+            
+            if (video) {
+                video.src = VIDEO_FILE;
+                promoText.textContent = VIDEO_TEXT;
+                promoFooterText.textContent = VIDEO_TEXT;
+                promoLink.href = VIDEO_LINK;
+                video.play().catch(e => console.log('Autoplay error:', e));
+            }
+        }
+
+        // ============ BANNER SLIDER ============
+        let currentBannerIndex = 0;
+        let banners = [];
+        let bannerInterval;
+
+        function loadBanners() {
+            database.ref('banners').orderByChild('order').once('value', (snapshot) => {
+                const data = snapshot.val();
+                banners = [];
+                
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        const banner = data[key];
+                        if (banner.active && banner.image) {
+                            banners.push(banner);
+                        }
+                    });
+                }
+                
+                if (banners.length === 0) {
+                    banners = [{
+                        image: 'https://via.placeholder.com/400x100/2e7d32/white?text=Fresh+Herbal',
+                        link: '#'
+                    }];
+                }
+                
+                renderBanners();
+                setupDragSlider();
+                startAutoSlide();
+            });
+        }
+
+        function renderBanners() {
+            const track = document.getElementById('bannerTrack');
+            const dotsContainer = document.getElementById('bannerDots');
+            if (!track) return;
+            
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            
+            banners.forEach((banner, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'banner-slide';
+                
+                const img = document.createElement('img');
+                img.src = banner.image;
+                img.alt = banner.title || 'Banner';
+                
+                if (banner.link && banner.link !== '#') {
+                    const link = document.createElement('a');
+                    link.href = banner.link;
+                    link.style.display = 'block';
+                    link.style.width = '100%';
+                    link.style.height = '100%';
+                    link.appendChild(img);
+                    slide.appendChild(link);
+                } else {
+                    slide.appendChild(img);
+                }
+                
+                track.appendChild(slide);
+                
+                const dot = document.createElement('div');
+                dot.className = `banner-dot ${index === currentBannerIndex ? 'active' : ''}`;
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    goToBanner(index);
+                });
+                dotsContainer.appendChild(dot);
+            });
+            
+            updateBannerPosition();
+        }
+
+        function updateBannerPosition() {
+            const track = document.getElementById('bannerTrack');
+            const container = document.getElementById('bannerSlider');
+            if (track && container) {
+                const slideWidth = container.clientWidth;
+                track.style.transform = `translateX(-${currentBannerIndex * slideWidth}px)`;
+            }
+            updateBannerDots();
+        }
+
+        function updateBannerDots() {
+            const dots = document.querySelectorAll('.banner-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentBannerIndex);
+            });
+        }
+
+        function goToBanner(index) {
+            if (index >= 0 && index < banners.length) {
+                currentBannerIndex = index;
+                updateBannerPosition();
+                resetAutoSlide();
+            }
+        }
+
+        function nextBanner() {
+            if (banners.length > 0) {
+                currentBannerIndex = (currentBannerIndex + 1) % banners.length;
+                updateBannerPosition();
+            }
+        }
+
+        function prevBanner() {
+            if (banners.length > 0) {
+                currentBannerIndex = (currentBannerIndex - 1 + banners.length) % banners.length;
+                updateBannerPosition();
+            }
+        }
+
+        function startAutoSlide() {
+            if (bannerInterval) clearInterval(bannerInterval);
+            bannerInterval = setInterval(() => nextBanner(), 4000);
+        }
+
+        function resetAutoSlide() {
+            if (bannerInterval) clearInterval(bannerInterval);
+            bannerInterval = setInterval(() => nextBanner(), 4000);
+        }
+
+        function setupDragSlider() {
+            const container = document.getElementById('bannerSlider');
+            if (!container) return;
+            
+            let startX = 0;
+            let isDragging = false;
+            
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX;
+                container.style.cursor = 'grabbing';
+            });
+            
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const diff = e.pageX - startX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) prevBanner();
+                    else nextBanner();
+                    isDragging = false;
+                    container.style.cursor = 'grab';
+                }
+            });
+            
+            container.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+            
+            container.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+            });
+            
+            container.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const diff = e.touches[0].clientX - startX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) prevBanner();
+                    else nextBanner();
+                    isDragging = false;
+                }
+            });
+            
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+        }
+
+        window.addEventListener('resize', () => updateBannerPosition());
+
+        // ============ PRODUK UNGGULAN ============
         function loadFeaturedProducts() {
-            const productsRef = database.ref('products');
-            productsRef.orderByChild('featured').equalTo(true).once('value')
+            database.ref('products').orderByChild('featured').equalTo(true).once('value')
                 .then((snapshot) => {
                     const products = [];
-                    snapshot.forEach((childSnapshot) => {
-                        const product = childSnapshot.val();
-                        product.id = childSnapshot.key;
+                    snapshot.forEach((child) => {
+                        const product = child.val();
+                        product.id = child.key;
                         products.push(product);
                     });
-                    
-                    // Urutkan berdasarkan nama atau yang terbaru
                     displayFeaturedProducts(products);
-                })
-                .catch((error) => {
-                    console.error("Error loading featured products:", error);
-                    document.getElementById('featuredProducts').innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #f44336;">
-                            <i class="fas fa-exclamation-circle" style="font-size: 48px;"></i>
-                            <p>Gagal memuat produk unggulan</p>
-                        </div>
-                    `;
                 });
         }
 
         function displayFeaturedProducts(products) {
             const container = document.getElementById('featuredProducts');
-            
             if (!products || products.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #999;">
-                        <i class="fas fa-star" style="font-size: 48px; margin-bottom: 10px; display: block;"></i>
-                        <p>Belum ada produk unggulan. Tambahkan di Admin Panel.</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="text-center"><p>Belum ada produk unggulan</p></div>';
                 return;
             }
             
-            // Max 3 produk unggulan
             const maxProducts = products.slice(0, 3);
-            
             container.innerHTML = maxProducts.map(product => {
-                const price = product.price_discount && product.price_discount < product.price 
-                    ? product.price_discount 
-                    : product.price;
-                const originalPrice = product.price_discount ? product.price : null;
-                
+                const price = product.price_discount || product.price;
                 return `
                     <div class="product-card">
-                        <img src="${product.image_main || product.image}" alt="${product.name}" class="product-image">
+                        <img src="${product.image_main || product.image}" class="product-image" onerror="this.src='https://via.placeholder.com/300'">
                         <div class="product-info">
                             <h3 class="product-title">${product.name}</h3>
-                            <p class="product-price">
-                                ${originalPrice ? `<span style="text-decoration: line-through; color: #999; font-size: 0.9rem;">Rp ${originalPrice.toLocaleString('id-ID')}</span><br>` : ''}
-                                Rp ${price.toLocaleString('id-ID')}
-                            </p>
+                            <p class="product-price">Rp ${price.toLocaleString('id-ID')}</p>
                             <div class="product-actions">
-                                <button onclick="viewProduct('${product.slug}')" class="btn btn-secondary">
-                                    <i class="fas fa-eye"></i> Detail
-                                </button>
-                                <button onclick="buyNow('${product.slug}')" class="btn btn-primary">
-                                    <i class="fas fa-shopping-bag"></i> Beli
-                                </button>
+                                <button onclick="viewProduct('${product.slug}')" class="btn btn-secondary">Detail</button>
+                                <button onclick="buyNow('${product.slug}')" class="btn btn-primary">Beli</button>
                             </div>
                         </div>
                     </div>
@@ -332,34 +729,96 @@ Kab Mojokerto, Jawa timur 68166</p>
             }).join('');
         }
 
-        // Fungsi view product
         function viewProduct(slug) {
             window.location.href = `product-detail.html?name=${slug}`;
         }
 
-        // Fungsi beli langsung
         function buyNow(slug) {
-            const productsRef = database.ref('products');
-            productsRef.orderByChild('slug').equalTo(slug).once('value')
+            database.ref('products').orderByChild('slug').equalTo(slug).once('value')
                 .then((snapshot) => {
                     let product = null;
-                    snapshot.forEach((childSnapshot) => {
-                        product = childSnapshot.val();
-                    });
-                    if (product) {
-                        const buyUrl = product.orderonline_url || product.buy_link || `https://wa.me/6285649589679?text=Saya%20ingin%20membeli%20${encodeURIComponent(product.name)}`;
-                        window.location.href = buyUrl;
-                    } else {
-                        window.location.href = `product-detail.html?name=${slug}`;
-                    }
+                    snapshot.forEach((child) => { product = child.val(); });
+                    const buyUrl = product?.orderonline_url || `https://wa.me/6285649589679?text=Saya%20ingin%20membeli%20${encodeURIComponent(product?.name || '')}`;
+                    window.location.href = buyUrl;
                 });
         }
 
-        // Load produk unggulan saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFeaturedProducts();
+        // ============ TESTIMONI FOTO ============
+        let allTestimonials = [];
+        let popupShown = false;
+
+        function loadPhotoTestimonials() {
+            database.ref('photoTestimonials').orderByChild('show_on_home').equalTo(true).once('value', (snapshot) => {
+                const testimonials = [];
+                snapshot.forEach((child) => testimonials.push(child.val()));
+                allTestimonials = testimonials;
+                
+                const footerContainer = document.getElementById('testimoniFooterGrid');
+                if (testimonials.length === 0) {
+                    footerContainer.innerHTML = '<div class="text-center"><p>Belum ada testimoni</p></div>';
+                } else {
+                    const showTestimonials = testimonials.slice(0, 3);
+                    footerContainer.innerHTML = showTestimonials.map(t => `
+                        <div class="testimoni-footer-card">
+                            <img src="${t.image}" class="testimoni-footer-img" onerror="this.src='https://via.placeholder.com/70'">
+                            <h4>${t.customer_name}</h4>
+                            <div style="color: #ffc107;">${'★'.repeat(t.rating)}${'☆'.repeat(5-t.rating)}</div>
+                            <p>"${t.testimonial?.substring(0, 80)}..."</p>
+                        </div>
+                    `).join('');
+                }
+                
+                setTimeout(() => showTestimoniPopup(), 2000);
+            });
+        }
+
+        function showTestimoniPopup() {
+            if (popupShown) return;
+            if (!allTestimonials || allTestimonials.length === 0) return;
             
-            // Mobile menu toggle
+            const modal = document.getElementById('testimoniPopup');
+            const body = document.getElementById('testimoniPopupBody');
+            
+            body.innerHTML = allTestimonials.map(t => `
+                <div class="testimoni-popup-item">
+                    <img src="${t.image}" class="testimoni-popup-img" onerror="this.src='https://via.placeholder.com/50'">
+                    <div>
+                        <strong>${t.customer_name}</strong>
+                        <div class="testimoni-popup-rating">${'★'.repeat(t.rating)}${'☆'.repeat(5-t.rating)}</div>
+                        <p>"${t.testimonial}"</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            modal.style.display = 'flex';
+            popupShown = true;
+        }
+
+        // ============ EVENT LISTENERS ============
+        document.getElementById('closePopupBtn')?.addEventListener('click', function() {
+            const popup = document.getElementById('videoPopup');
+            const video = document.getElementById('promoVideo');
+            if (video) video.pause();
+            popup.style.opacity = '0';
+            setTimeout(() => popup.style.display = 'none', 300);
+        });
+        
+        document.getElementById('closeTestimoniPopup')?.addEventListener('click', function() {
+            document.getElementById('testimoniPopup').style.display = 'none';
+        });
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('testimoniPopup');
+            if (event.target === modal) modal.style.display = 'none';
+        };
+
+        // ============ MOBILE MENU ============
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBanners();
+            loadFeaturedProducts();
+            loadPhotoTestimonials();
+            loadPromoVideo();
+            
             const menuBtn = document.querySelector('.mobile-menu-btn');
             const nav = document.querySelector('.main-nav');
             if (menuBtn && nav) {
@@ -376,29 +835,6 @@ Kab Mojokerto, Jawa timur 68166</p>
                 });
             }
         });
-
-        // Popup video
-        const popup = document.getElementById('videoPopup');
-        const closeBtn = document.getElementById('closePopupBtn');
-        const video = document.getElementById('videoIklan');
-
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                if (video) video.pause();
-                popup.style.transition = 'opacity 0.3s, transform 0.3s';
-                popup.style.opacity = '0';
-                popup.style.transform = 'translateY(20px)';
-                setTimeout(function() {
-                    popup.style.display = 'none';
-                }, 300);
-            });
-        }
-
-        if (video) {
-            video.play().catch(function(error) {
-                console.log('Autoplay error:', error);
-            });
-        }
     </script>
 </body>
 </html>
