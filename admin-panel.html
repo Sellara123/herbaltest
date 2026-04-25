@@ -9,15 +9,53 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #f5f5f5; }
+        
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
         }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5f5f5;
+        .login-box {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
         }
+        .login-box h2 { color: #2e7d32; margin-bottom: 10px; }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .login-error { color: red; margin-top: 10px; font-size: 14px; }
+        
+        /* Admin Panel */
+        .admin-panel { display: none; }
         .admin-header {
             background: #2e7d32;
             color: white;
@@ -28,22 +66,29 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .admin-header h1 {
-            font-size: 1.5rem;
+        .admin-tabs {
+            background: white;
+            padding: 0 2rem;
+            display: flex;
+            gap: 5px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
         }
-        .logout-btn {
-            background: rgba(255,255,255,0.2);
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
             border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
             cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
         }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
+        .tab-btn.active {
+            color: #2e7d32;
+            border-bottom: 3px solid #2e7d32;
         }
+        .tab-content { display: none; padding: 2rem; }
+        .tab-content.active { display: block; }
+        .container { max-width: 1400px; margin: 0 auto; }
         .btn-add {
             background: #2e7d32;
             color: white;
@@ -54,25 +99,16 @@
             margin-bottom: 2rem;
             font-size: 1rem;
         }
-        .products-table {
+        .btn-add:hover { background: #1b5e20; }
+        .products-table, .testimonials-table, .banners-table {
             background: white;
             border-radius: 12px;
             overflow-x: auto;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
-        }
-        .product-img {
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; }
+        .product-img, .testimonial-img, .banner-img {
             width: 50px;
             height: 50px;
             object-fit: cover;
@@ -85,31 +121,16 @@
             cursor: pointer;
             margin: 0 4px;
         }
-        .btn-edit {
-            background: #2196f3;
-            color: white;
-        }
-        .btn-delete {
-            background: #f44336;
-            color: white;
-        }
-        .btn-featured {
-            background: #ff9800;
-            color: white;
-        }
-        .btn-featured.active {
-            background: #4caf50;
-        }
+        .btn-edit { background: #2196f3; color: white; }
+        .btn-delete { background: #f44336; color: white; }
+        .btn-featured { background: #ff9800; color: white; }
         .featured-badge {
             background: #ff9800;
             color: white;
             padding: 4px 8px;
             border-radius: 20px;
             font-size: 0.7rem;
-            font-weight: bold;
         }
-        
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -131,26 +152,15 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        .modal-content h2 {
-            margin-bottom: 1.5rem;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
+        .close-modal { float: right; font-size: 24px; cursor: pointer; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-family: 'Poppins', sans-serif;
-        }
-        .form-group textarea {
-            min-height: 100px;
         }
         .btn-submit {
             background: #2e7d32;
@@ -160,116 +170,133 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            font-size: 1rem;
         }
-        .close-modal {
-            float: right;
-            font-size: 24px;
-            cursor: pointer;
+        .warning-banner {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
         }
-        .warning-text {
-            color: #f44336;
-            font-size: 0.8rem;
-            margin-top: 5px;
+        @media (max-width: 768px) {
+            .admin-tabs { padding: 0 1rem; }
+            .tab-btn { padding: 0.8rem 1rem; font-size: 0.8rem; }
+            th, td { padding: 0.5rem; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-    <div class="admin-header">
-        <h1><i class="fas fa-leaf"></i> Fresh Herbal - Admin Panel</h1>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h2><i class="fas fa-leaf"></i> Admin Login</h2>
+            <p style="color:#666; margin-bottom:20px">Masuk untuk mengelola website</p>
+            <input type="text" id="loginUsername" placeholder="Username">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button onclick="doLogin()">Login</button>
+            <div id="loginError" class="login-error"></div>
+        </div>
     </div>
     
-    <div class="container">
-        <button class="btn-add" onclick="openAddModal()">
-            <i class="fas fa-plus"></i> Tambah Produk
-        </button>
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h1><i class="fas fa-leaf"></i> Fresh Herbal - Admin Panel</h1>
+            <div>
+                <span style="margin-right:15px"><i class="fas fa-user"></i> <span id="adminName">Admin</span></span>
+                <button class="btn-add" style="margin-bottom:0; background:#f44336" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
         
-        <div class="products-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Gambar</th>
-                        <th>Nama Produk</th>
-                        <th>Slug</th>
-                        <th>Kategori</th>
-                        <th>Harga</th>
-                        <th>Stok</th>
-                        <th>Unggulan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="productsTableBody">
-                    <tr><td colspan="8">Loading...</td></tr>
-                </tbody>
-            </table>
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('products')"><i class="fas fa-box"></i> Produk</button>
+            <button class="tab-btn" onclick="switchTab('testimonials')"><i class="fas fa-star"></i> Testimoni</button>
+            <button class="tab-btn" onclick="switchTab('banners')"><i class="fas fa-images"></i> Banner Slider</button>
+        </div>
+        
+        <div id="productsTab" class="tab-content active">
+            <div class="container">
+                <button class="btn-add" onclick="openAddProductModal()">+ Tambah Produk</button>
+                <div class="products-table">
+                    <table>
+                        <thead><tr><th>Gambar</th><th>Nama</th><th>Slug</th><th>Kategori</th><th>Harga</th><th>Stok</th><th>Unggulan</th><th>Aksi</th></tr></thead>
+                        <tbody id="productsTableBody"><tr><td colspan="8">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="testimonialsTab" class="tab-content">
+            <div class="container">
+                <button class="btn-add" onclick="openAddTestimonialModal()">+ Tambah Testimoni</button>
+                <div class="testimonials-table">
+                    </table>
+                        <thead><tr><th>Gambar</th><th>Nama</th><th>Testimoni</th><th>Rating</th><th>Tampil di Home</th><th>Aksi</th><table></thead>
+                        <tbody id="photoTestimonialsBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="bannersTab" class="tab-content">
+            <div class="container">
+                <button class="btn-add" onclick="openAddBannerModal()">+ Tambah Banner</button>
+                <div class="warning-banner">
+                    <i class="fas fa-image"></i> <strong>Tips Banner:</strong> Ukuran gambar 400 x 100 pixel
+                </div>
+                <div class="banners-table">
+                    <table>
+                        <thead><tr><th>Gambar</th><th>Judul</th><th>Link</th><th>Urutan</th><th>Aktif</th><th>Aksi</th></tr></thead>
+                        <tbody id="bannersTableBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     
-    <!-- Modal Form -->
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle">Tambah Produk</h2>
-            <form id="productForm">
-                <input type="hidden" id="productId">
-                <div class="form-group">
-                    <label>Nama Produk *</label>
-                    <input type="text" id="productName" required>
-                </div>
-                <div class="form-group">
-                    <label>Slug (URL name) *</label>
-                    <input type="text" id="productSlug" required placeholder="contoh: bawang-hitam">
-                    <small>Digunakan untuk URL: product-detail.html?name=slug</small>
-                </div>
-                <div class="form-group">
-                    <label>Kategori</label>
-                    <select id="productCategory">
-                        <option value="Bawang Hitam">Bawang Hitam</option>
-                        <option value="Bubuk">Bubuk</option>
-                        <option value="Madu">Madu</option>
-                        <option value="Minuman">Minuman</option>
-                        <option value="Rimpang">Rimpang</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Harga (Rp)</label>
-                    <input type="number" id="productPrice" required>
-                </div>
-                <div class="form-group">
-                    <label>Harga Diskon (kosongkan jika tidak ada)</label>
-                    <input type="number" id="productDiscount">
-                </div>
-                <div class="form-group">
-                    <label>Stok</label>
-                    <input type="number" id="productStock" value="99">
-                </div>
-                <div class="form-group">
-                    <label>Gambar Utama (URL)</label>
-                    <input type="text" id="productImage" required>
-                </div>
-                <div class="form-group">
-                    <label>Gallery Gambar (URL, pisahkan dengan koma)</label>
-                    <input type="text" id="productGallery" placeholder="url1, url2, url3">
-                </div>
-                <div class="form-group">
-                    <label>Deskripsi Singkat</label>
-                    <textarea id="productDescShort"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Deskripsi Lengkap (HTML)</label>
-                    <textarea id="productDescFull"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Link Pembelian (WhatsApp/Shopee/Tokopedia)</label>
-                    <input type="text" id="productBuyLink" placeholder="https://wa.me/6285649589679?text=Saya%20ingin%20membeli">
-                </div>
-                <button type="submit" class="btn-submit">Simpan Produk</button>
-            </form>
-        </div>
-    </div>
+    <!-- Modal Produk -->
+    <div id="productModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('productModal')">&times;</span><h2 id="productModalTitle">Tambah Produk</h2>
+        <form id="productForm"><input type="hidden" id="productId">
+            <div class="form-group"><label>Nama Produk *</label><input type="text" id="productName" required></div>
+            <div class="form-group"><label>Slug *</label><input type="text" id="productSlug" required></div>
+            <div class="form-group"><label>Kategori</label><select id="productCategory"><option>Bawang Hitam</option><option>Bubuk</option><option>Madu</option><option>Minuman</option><option>Rimpang</option></select></div>
+            <div class="form-group"><label>Harga (Rp)</label><input type="number" id="productPrice" required></div>
+            <div class="form-group"><label>Harga Diskon</label><input type="number" id="productDiscount"></div>
+            <div class="form-group"><label>Stok</label><input type="number" id="productStock" value="99"></div>
+            <div class="form-group"><label>Gambar URL</label><input type="text" id="productImage" required></div>
+            <div class="form-group"><label>Gallery (pisah koma)</label><input type="text" id="productGallery"></div>
+            <div class="form-group"><label>Deskripsi Singkat</label><textarea id="productDescShort"></textarea></div>
+            <div class="form-group"><label>Link Beli</label><input type="text" id="productBuyLink"></div>
+            <button type="submit" class="btn-submit">Simpan</button>
+        </form>
+    </div></div>
+    
+    <!-- Modal Testimoni -->
+    <div id="photoTestimonialModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('photoTestimonialModal')">&times;</span><h2 id="photoTestimonialModalTitle">Tambah Testimoni</h2>
+        <form id="photoTestimonialForm"><input type="hidden" id="photoTestimonialId">
+            <div class="form-group"><label>Nama Pelanggan *</label><input type="text" id="photoCustomerName" required></div>
+            <div class="form-group"><label>Foto URL *</label><input type="text" id="photoTestimonialImage" required></div>
+            <div class="form-group"><label>Testimoni *</label><textarea id="photoTestimonialText" required></textarea></div>
+            <div class="form-group"><label>Rating</label><select id="photoTestimonialRating"><option value="5">★★★★★ (5)</option><option value="4">★★★★☆ (4)</option><option value="3">★★★☆☆ (3)</option><option value="2">★★☆☆☆ (2)</option><option value="1">★☆☆☆☆ (1)</option></select></div>
+            <div class="form-group"><label>Tampil di Home</label><select id="photoTestimonialShowHome"><option value="true">Ya</option><option value="false">Tidak</option></select></div>
+            <button type="submit" class="btn-submit">Simpan</button>
+        </form>
+    </div></div>
+    
+    <!-- Modal Banner -->
+    <div id="bannerModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('bannerModal')">&times;</span><h2 id="bannerModalTitle">Tambah Banner</h2>
+        <form id="bannerForm"><input type="hidden" id="bannerId">
+            <div class="form-group"><label>Gambar URL *</label><input type="text" id="bannerImage" required></div>
+            <div class="form-group"><label>Judul</label><input type="text" id="bannerTitle"></div>
+            <div class="form-group"><label>Link</label><input type="text" id="bannerLink"></div>
+            <div class="form-group"><label>Urutan</label><input type="number" id="bannerOrder" value="0"></div>
+            <div class="form-group"><label>Aktif</label><select id="bannerActive"><option value="true">Ya</option><option value="false">Tidak</option></select></div>
+            <button type="submit" class="btn-submit">Simpan</button>
+        </form>
+    </div></div>
 
     <script>
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAWoUkWW4mn8r6mADaV5dhzNvKJ2A4PDVU",
             authDomain: "fresh-herbal-2024.firebaseapp.com",
@@ -282,190 +309,434 @@
         
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const productsRef = database.ref('products');
-        
-        // Cek login
-        if (localStorage.getItem('adminLoggedIn') !== 'true') {
-            window.location.href = 'admin-login.html';
-        }
         
         let currentProducts = [];
+        let currentPhotoTestimonials = [];
+        let currentBanners = [];
+        let currentAdminUser = null;
         
-        // Load products dari Firebase
+        // ============ FUNGSI SIMPAN LOG KE DATABASE ============
+        function saveLog(action, detail) {
+            if (!currentAdminUser) return;
+            
+            const logData = {
+                username: currentAdminUser.username,
+                fullname: currentAdminUser.fullname || currentAdminUser.username,
+                action: action,
+                detail: detail || '',
+                ip: 'Local',
+                status: 'success',
+                timestamp: new Date().toISOString(),
+                date: new Date().toDateString()
+            };
+            database.ref('ownerLogs').push(logData);
+            console.log('Log tersimpan:', action);
+        }
+        
+        // ============ LOGIN KE DATABASE adminUsers ============
+        async function doLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                document.getElementById('loginError').innerHTML = 'Username dan password harus diisi!';
+                return;
+            }
+            
+            // Ambil data admin dari database
+            const snapshot = await database.ref('adminUsers').once('value');
+            const users = snapshot.val();
+            let loginSuccess = false;
+            let userData = null;
+            let userId = null;
+            
+            if (users) {
+                for (let key in users) {
+                    const user = users[key];
+                    if (user.username === username && user.status === 'active') {
+                        try {
+                            const decryptedPass = atob(user.password);
+                            if (decryptedPass === password) {
+                                loginSuccess = true;
+                                userData = user;
+                                userId = key;
+                                break;
+                            }
+                        } catch(e) { console.log('Password decode error'); }
+                    }
+                }
+            }
+            
+            if (loginSuccess) {
+                // Update last_login
+                await database.ref('adminUsers').child(userId).update({
+                    last_login: new Date().toISOString()
+                });
+                
+                // Simpan session
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminId', userId);
+                localStorage.setItem('adminUsername', username);
+                localStorage.setItem('adminFullname', userData.fullname || username);
+                
+                currentAdminUser = { id: userId, username: username, fullname: userData.fullname };
+                document.getElementById('adminName').innerText = userData.fullname || username;
+                
+                // Simpan log login
+                saveLog('LOGIN', 'Login ke sistem');
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                
+                // Load semua data
+                loadProducts();
+                loadPhotoTestimonials();
+                loadBanners();
+            } else {
+                // Simpan log gagal login
+                const failLog = {
+                    username: username,
+                    action: 'LOGIN_GAGAL',
+                    detail: 'Login gagal - username/password salah',
+                    ip: 'Local',
+                    status: 'failed',
+                    timestamp: new Date().toISOString(),
+                    date: new Date().toDateString()
+                };
+                database.ref('ownerLogs').push(failLog);
+                document.getElementById('loginError').innerHTML = 'Username atau password salah! Atau akun Anda nonaktif.';
+            }
+        }
+        
+        function logout() {
+            if (currentAdminUser) {
+                saveLog('LOGOUT', 'Logout dari sistem');
+            }
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('adminUsername');
+            localStorage.removeItem('adminFullname');
+            currentAdminUser = null;
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').innerHTML = '';
+        }
+        
+        // Cek session
+        if (localStorage.getItem('adminLoggedIn') === 'true') {
+            currentAdminUser = {
+                id: localStorage.getItem('adminId'),
+                username: localStorage.getItem('adminUsername'),
+                fullname: localStorage.getItem('adminFullname')
+            };
+            document.getElementById('adminName').innerText = currentAdminUser.fullname || currentAdminUser.username;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadProducts();
+            loadPhotoTestimonials();
+            loadBanners();
+        }
+        
+        // ============ SWITCH TAB ============
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            if (tab === 'products') { 
+                document.getElementById('productsTab').classList.add('active'); 
+                document.querySelector('.tab-btn:first-child').classList.add('active'); 
+            } else if (tab === 'testimonials') { 
+                document.getElementById('testimonialsTab').classList.add('active'); 
+                document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
+                loadPhotoTestimonials(); 
+            } else if (tab === 'banners') { 
+                document.getElementById('bannersTab').classList.add('active'); 
+                document.querySelectorAll('.tab-btn')[2].classList.add('active'); 
+                loadBanners(); 
+            }
+        }
+        
+        // ============ PRODUK ============
         function loadProducts() {
-            productsRef.on('value', (snapshot) => {
+            database.ref('products').on('value', (snapshot) => {
                 const products = snapshot.val();
                 currentProducts = [];
                 const tbody = document.getElementById('productsTableBody');
                 tbody.innerHTML = '';
-                
                 if (products) {
                     Object.keys(products).forEach(key => {
-                        const product = products[key];
-                        product.id = key;
-                        currentProducts.push(product);
-                        
-                        const row = tbody.insertRow();
-                        row.innerHTML = `
-                            <td><img src="${product.image_main || product.image}" class="product-img" onerror="this.src='https://via.placeholder.com/50'"></td>
-                            <td>${product.name}</td>
-                            <td>${product.slug || '-'}</td>
-                            <td>${product.category}</td>
-                            <td>Rp ${(product.price_discount || product.price).toLocaleString('id-ID')}</td>
-                            <td>${product.stock || 0}</td>
+                        const p = products[key]; p.id = key;
+                        currentProducts.push(p);
+                        const price = p.price_discount || p.price;
+                        tbody.innerHTML += `<tr>
+                            <td><img src="${p.image_main||p.image}" class="product-img" onerror="this.src='https://via.placeholder.com/50'"></td>
+                            <td>${p.name || '-'}</td>
+                            <td>${p.slug || '-'}</td>
+                            <td>${p.category || '-'}</td>
+                            <td>Rp ${(price).toLocaleString('id-ID')}</td>
+                            <td>${p.stock || 0}</td>
+                            <td>${p.featured ? '<span class="featured-badge"><i class="fas fa-star"></i> Unggulan</span>' : '-'}</td>
                             <td>
-                                ${product.featured ? '<span class="featured-badge"><i class="fas fa-star"></i> Unggulan</span>' : '-'}
-                            </td>
-                            <td>
-                                <button class="btn-featured ${product.featured ? 'active' : ''}" onclick="toggleFeatured('${key}', ${!product.featured})">
-                                    <i class="fas fa-${product.featured ? 'star' : 'star-o'}"></i> ${product.featured ? 'Cabut' : 'Jadikan Unggulan'}
-                                </button>
-                                <button class="btn-edit" onclick="editProduct('${key}')"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn-delete" onclick="deleteProduct('${key}')"><i class="fas fa-trash"></i> Hapus</button>
-                            </td>
-                        `;
+                                <button class="btn-featured" onclick="toggleFeatured('${key}', ${!p.featured})"><i class="fas fa-${p.featured ? 'star' : 'star-o'}"></i></button>
+                                <button class="btn-edit" onclick="editProduct('${key}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete" onclick="deleteProduct('${key}')"><i class="fas fa-trash"></i></button>
+                             </td>
+                        </tr>`;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8">Belum ada produk. Silakan tambah produk baru.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8">Belum ada produk</td></tr>';
                 }
             });
         }
         
-        // Tambahkan fungsi untuk mendapatkan unique categories (opsional, untuk info)
-function getUniqueCategories() {
-    const categories = new Set();
-    currentProducts.forEach(product => {
-        if (product.category) categories.add(product.category);
-    });
-    console.log('Categories available:', Array.from(categories));
-}
-
-// Panggil setelah load products
-// Di dalam productsRef.on('value', ... tambahkan:
-// getUniqueCategories();
-        
-        // Toggle featured (max 3 produk unggulan)
-        async function toggleFeatured(productId, setFeatured) {
-            if (setFeatured) {
-                // Hitung berapa produk yang sudah featured
-                const featuredCount = currentProducts.filter(p => p.featured === true && p.id !== productId).length;
-                
-                if (featuredCount >= 3) {
-                    alert('Maksimal produk unggulan adalah 3! Hapus salah satu produk unggulan terlebih dahulu.');
-                    return;
-                }
+        async function toggleFeatured(id, set) {
+            if (set && currentProducts.filter(p => p.featured === true && p.id !== id).length >= 3) { 
+                alert('Maksimal 3 produk unggulan!'); 
+                return; 
             }
-            
-            try {
-                await productsRef.child(productId).update({ featured: setFeatured });
-                alert(setFeatured ? 'Produk berhasil dijadikan unggulan!' : 'Produk berhasil dicabut dari unggulan');
-            } catch (error) {
-                alert('Gagal mengupdate status unggulan');
-                console.error(error);
-            }
+            await database.ref('products').child(id).update({ featured: set });
+            saveLog('UPDATE_PRODUCT', `${set ? 'Menjadikan' : 'Mencabut'} produk sebagai unggulan`);
         }
         
-        // Save product
-        function saveProduct(event) {
-            event.preventDefault();
-            
+        function openAddProductModal() { 
+            document.getElementById('productModalTitle').innerText = 'Tambah Produk'; 
+            document.getElementById('productForm').reset(); 
+            document.getElementById('productId').value = ''; 
+            document.getElementById('productModal').style.display = 'flex'; 
+        }
+        
+        function editProduct(id) { 
+            const p = currentProducts.find(p => p.id === id); 
+            if(p){ 
+                document.getElementById('productModalTitle').innerText = 'Edit Produk'; 
+                document.getElementById('productId').value = id; 
+                document.getElementById('productName').value = p.name || ''; 
+                document.getElementById('productSlug').value = p.slug || ''; 
+                document.getElementById('productCategory').value = p.category || 'Bawang Hitam'; 
+                document.getElementById('productPrice').value = p.price || 0; 
+                document.getElementById('productDiscount').value = p.price_discount || ''; 
+                document.getElementById('productStock').value = p.stock || 0; 
+                document.getElementById('productImage').value = p.image_main || p.image || ''; 
+                document.getElementById('productGallery').value = (p.gallery || []).join(', ');
+                document.getElementById('productDescShort').value = p.description_short || ''; 
+                document.getElementById('productBuyLink').value = p.orderonline_url || ''; 
+                document.getElementById('productModal').style.display = 'flex'; 
+            } 
+        }
+        
+        function deleteProduct(id) { 
+            if(confirm('Yakin hapus produk ini?')) { 
+                const product = currentProducts.find(p => p.id === id);
+                database.ref('products').child(id).remove();
+                saveLog('DELETE_PRODUCT', `Menghapus produk: ${product?.name || 'unknown'}`);
+            } 
+        }
+        
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
             const id = document.getElementById('productId').value;
+            const productName = document.getElementById('productName').value;
             const galleryInput = document.getElementById('productGallery').value;
             const gallery = galleryInput ? galleryInput.split(',').map(s => s.trim()) : [];
-            
-            const productData = {
-                name: document.getElementById('productName').value,
-                slug: document.getElementById('productSlug').value,
-                category: document.getElementById('productCategory').value,
-                price: parseInt(document.getElementById('productPrice').value),
-                price_discount: document.getElementById('productDiscount').value ? parseInt(document.getElementById('productDiscount').value) : null,
-                stock: parseInt(document.getElementById('productStock').value),
-                image_main: document.getElementById('productImage').value,
+            const data = { 
+                name: productName, 
+                slug: document.getElementById('productSlug').value, 
+                category: document.getElementById('productCategory').value, 
+                price: parseInt(document.getElementById('productPrice').value), 
+                price_discount: document.getElementById('productDiscount').value ? parseInt(document.getElementById('productDiscount').value) : null, 
+                stock: parseInt(document.getElementById('productStock').value), 
+                image_main: document.getElementById('productImage').value, 
                 image: document.getElementById('productImage').value,
                 gallery: gallery,
-                description_short: document.getElementById('productDescShort').value,
-                description_full: document.getElementById('productDescFull').value,
-                orderonline_url: document.getElementById('productBuyLink').value || 'https://wa.me/6285649589679',
-                featured: false,
-                updated_at: new Date().toISOString()
+                description_short: document.getElementById('productDescShort').value, 
+                orderonline_url: document.getElementById('productBuyLink').value || 'https://wa.me/6285649589679', 
+                updated_at: new Date().toISOString() 
             };
-            
-            if (id) {
-                productsRef.child(id).update(productData).then(() => {
-                    alert('Produk berhasil diupdate!');
-                    closeModal();
-                }).catch(err => alert('Error: ' + err.message));
+            if(id) {
+                await database.ref('products').child(id).update(data);
+                saveLog('UPDATE_PRODUCT', `Mengedit produk: ${productName}`);
             } else {
-                productData.created_at = new Date().toISOString();
-                productsRef.push(productData).then(() => {
-                    alert('Produk berhasil ditambahkan!');
-                    closeModal();
-                }).catch(err => alert('Error: ' + err.message));
+                data.created_at = new Date().toISOString(); 
+                data.featured = false; 
+                await database.ref('products').push(data);
+                saveLog('CREATE_PRODUCT', `Menambah produk baru: ${productName}`);
             }
-        }
-        
-        function editProduct(id) {
-            const product = currentProducts.find(p => p.id === id);
-            if (product) {
-                document.getElementById('modalTitle').textContent = 'Edit Produk';
-                document.getElementById('productId').value = id;
-                document.getElementById('productName').value = product.name || '';
-                document.getElementById('productSlug').value = product.slug || '';
-                document.getElementById('productCategory').value = product.category || 'Bawang Hitam';
-                document.getElementById('productPrice').value = product.price || 0;
-                document.getElementById('productDiscount').value = product.price_discount || '';
-                document.getElementById('productStock').value = product.stock || 0;
-                document.getElementById('productImage').value = product.image_main || product.image || '';
-                document.getElementById('productGallery').value = (product.gallery || []).join(', ');
-                document.getElementById('productDescShort').value = product.description_short || '';
-                document.getElementById('productDescFull').value = product.description_full || '';
-                document.getElementById('productBuyLink').value = product.orderonline_url || product.buy_link || '';
-                document.getElementById('productModal').style.display = 'flex';
-            }
-        }
-        
-        function deleteProduct(id) {
-            if (confirm('Yakin ingin menghapus produk ini?')) {
-                productsRef.child(id).remove().then(() => {
-                    alert('Produk berhasil dihapus!');
-                }).catch(err => alert('Error: ' + err.message));
-            }
-        }
-        
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Tambah Produk';
-            document.getElementById('productForm').reset();
-            document.getElementById('productId').value = '';
-            document.getElementById('productModal').style.display = 'flex';
-        }
-        
-        function closeModal() {
-            document.getElementById('productModal').style.display = 'none';
-        }
-        
-        function logout() {
-            localStorage.removeItem('adminLoggedIn');
-            window.location.href = 'admin-login.html';
-        }
-        
-        document.getElementById('productForm').addEventListener('submit', saveProduct);
-        
-        // Generate slug otomatis dari nama
-        document.getElementById('productName').addEventListener('input', function() {
-            const slug = this.value.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-');
-            document.getElementById('productSlug').value = slug;
+            alert('Produk tersimpan!'); 
+            closeModal('productModal');
         });
         
-        loadProducts();
+        document.getElementById('productName').addEventListener('input', function() { 
+            document.getElementById('productSlug').value = this.value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); 
+        });
         
-        // Close modal klik di luar
-        window.onclick = function(event) {
-            const modal = document.getElementById('productModal');
-            if (event.target === modal) {
-                closeModal();
+        // ============ TESTIMONI FOTO ============
+        function loadPhotoTestimonials() {
+            database.ref('photoTestimonials').on('value', (snapshot) => {
+                const items = snapshot.val();
+                currentPhotoTestimonials = [];
+                const tbody = document.getElementById('photoTestimonialsBody');
+                tbody.innerHTML = '';
+                if(items){
+                    Object.keys(items).forEach(key => {
+                        const item = items[key]; item.id = key;
+                        currentPhotoTestimonials.push(item);
+                        tbody.innerHTML += `<tr>
+                            <td><img src="${item.image}" class="testimonial-img" onerror="this.src='https://via.placeholder.com/50'"></td>
+                            <td>${item.customer_name || '-'}</td>
+                            <td>${item.testimonial ? item.testimonial.substring(0,50) : ''}...</td>
+                            <td>${'★'.repeat(item.rating || 5)}${'☆'.repeat(5-(item.rating || 5))}</td>
+                            <td>${item.show_on_home ? '<i class="fas fa-check-circle" style="color:green"></i> Ya' : '<i class="fas fa-times-circle" style="color:gray"></i> Tidak'}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editPhotoTestimonial('${key}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete" onclick="deletePhotoTestimonial('${key}')"><i class="fas fa-trash"></i></button>
+                             </td>
+                        </tr>`;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6">Belum ada testimoni</td></tr>';
+                }
+            });
+        }
+        
+        function openAddTestimonialModal() { 
+            document.getElementById('photoTestimonialModalTitle').innerText = 'Tambah Testimoni'; 
+            document.getElementById('photoTestimonialForm').reset(); 
+            document.getElementById('photoTestimonialId').value = ''; 
+            document.getElementById('photoTestimonialModal').style.display = 'flex'; 
+        }
+        
+        function editPhotoTestimonial(id) { 
+            const item = currentPhotoTestimonials.find(t => t.id === id); 
+            if(item){ 
+                document.getElementById('photoTestimonialModalTitle').innerText = 'Edit Testimoni'; 
+                document.getElementById('photoTestimonialId').value = id; 
+                document.getElementById('photoCustomerName').value = item.customer_name || ''; 
+                document.getElementById('photoTestimonialImage').value = item.image || ''; 
+                document.getElementById('photoTestimonialText').value = item.testimonial || ''; 
+                document.getElementById('photoTestimonialRating').value = item.rating || 5; 
+                document.getElementById('photoTestimonialShowHome').value = item.show_on_home ? 'true' : 'false'; 
+                document.getElementById('photoTestimonialModal').style.display = 'flex'; 
+            } 
+        }
+        
+        function deletePhotoTestimonial(id) { 
+            if(confirm('Yakin hapus testimoni ini?')) { 
+                const item = currentPhotoTestimonials.find(t => t.id === id);
+                database.ref('photoTestimonials').child(id).remove();
+                saveLog('DELETE_TESTIMONIAL', `Menghapus testimoni dari ${item?.customer_name || 'unknown'}`);
+            } 
+        }
+        
+        document.getElementById('photoTestimonialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('photoTestimonialId').value;
+            const customerName = document.getElementById('photoCustomerName').value;
+            const data = { 
+                customer_name: customerName, 
+                image: document.getElementById('photoTestimonialImage').value, 
+                testimonial: document.getElementById('photoTestimonialText').value, 
+                rating: parseInt(document.getElementById('photoTestimonialRating').value), 
+                show_on_home: document.getElementById('photoTestimonialShowHome').value === 'true', 
+                type: 'photo', 
+                updated_at: new Date().toISOString() 
+            };
+            if(id) {
+                await database.ref('photoTestimonials').child(id).update(data);
+                saveLog('UPDATE_TESTIMONIAL', `Mengedit testimoni dari ${customerName}`);
+            } else {
+                data.created_at = new Date().toISOString(); 
+                await database.ref('photoTestimonials').push(data);
+                saveLog('CREATE_TESTIMONIAL', `Menambah testimoni dari ${customerName}`);
             }
+            alert('Testimoni tersimpan!'); 
+            closeModal('photoTestimonialModal');
+        });
+        
+        // ============ BANNER ============
+        function loadBanners() {
+            database.ref('banners').orderByChild('order').on('value', (snapshot) => {
+                const banners = snapshot.val();
+                currentBanners = [];
+                const tbody = document.getElementById('bannersTableBody');
+                tbody.innerHTML = '';
+                if(banners){
+                    Object.keys(banners).forEach(key => {
+                        const b = banners[key]; b.id = key;
+                        currentBanners.push(b);
+                        tbody.innerHTML += `<tr>
+                            <td><img src="${b.image}" class="banner-img" onerror="this.src='https://via.placeholder.com/50'"></td>
+                            <td>${b.title || '-'}</td>
+                            <td>${b.link ? '<a href="'+b.link+'" target="_blank">Link</a>' : '-'}</td>
+                            <td>${b.order || 0}</td>
+                            <td>${b.active ? '<i class="fas fa-check-circle" style="color:green"></i>' : '<i class="fas fa-times-circle" style="color:red"></i>'}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editBanner('${key}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete" onclick="deleteBanner('${key}')"><i class="fas fa-trash"></i></button>
+                             </td>
+                        </tr>`;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6">Belum ada banner</td></tr>';
+                }
+            });
+        }
+        
+        function openAddBannerModal() { 
+            document.getElementById('bannerModalTitle').innerText = 'Tambah Banner'; 
+            document.getElementById('bannerForm').reset(); 
+            document.getElementById('bannerId').value = ''; 
+            document.getElementById('bannerModal').style.display = 'flex'; 
+        }
+        
+        function editBanner(id) { 
+            const b = currentBanners.find(b => b.id === id); 
+            if(b){ 
+                document.getElementById('bannerModalTitle').innerText = 'Edit Banner'; 
+                document.getElementById('bannerId').value = id; 
+                document.getElementById('bannerImage').value = b.image || ''; 
+                document.getElementById('bannerTitle').value = b.title || ''; 
+                document.getElementById('bannerLink').value = b.link || ''; 
+                document.getElementById('bannerOrder').value = b.order || 0; 
+                document.getElementById('bannerActive').value = b.active ? 'true' : 'false'; 
+                document.getElementById('bannerModal').style.display = 'flex'; 
+            } 
+        }
+        
+        function deleteBanner(id) { 
+            if(confirm('Yakin hapus banner ini?')) { 
+                const banner = currentBanners.find(b => b.id === id);
+                database.ref('banners').child(id).remove();
+                saveLog('DELETE_BANNER', `Menghapus banner: ${banner?.title || 'tanpa judul'}`);
+            } 
+        }
+        
+        document.getElementById('bannerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('bannerId').value;
+            const bannerTitle = document.getElementById('bannerTitle').value;
+            const data = { 
+                image: document.getElementById('bannerImage').value, 
+                title: bannerTitle, 
+                link: document.getElementById('bannerLink').value, 
+                order: parseInt(document.getElementById('bannerOrder').value), 
+                active: document.getElementById('bannerActive').value === 'true', 
+                updated_at: new Date().toISOString() 
+            };
+            if(id) {
+                await database.ref('banners').child(id).update(data);
+                saveLog('UPDATE_BANNER', `Mengedit banner: ${bannerTitle || 'tanpa judul'}`);
+            } else {
+                data.created_at = new Date().toISOString(); 
+                await database.ref('banners').push(data);
+                saveLog('CREATE_BANNER', `Menambah banner baru: ${bannerTitle || 'tanpa judul'}`);
+            }
+            alert('Banner tersimpan!'); 
+            closeModal('bannerModal');
+        });
+        
+        function closeModal(modalId) { 
+            document.getElementById(modalId).style.display = 'none'; 
         }
     </script>
 </body>
